@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: talaseen-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-talaseen}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-talaseen123}
+      POSTGRES_DB: ${POSTGRES_DB:-talaseen}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talaseen"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: talaseen-backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-talaseen}:${POSTGRES_PASSWORD:-talaseen123}@postgres:5432/${POSTGRES_DB:-talaseen}
+      PORT: 4000
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./services/backend:/app
+      - /app/node_modules
+      - uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    container_name: talaseen-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./services/frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+  vendor-panel:
+    build:
+      context: ./services/vendor-panel
+      dockerfile: Dockerfile
+    container_name: talaseen-vendor
+    environment:
+      VITE_API_URL: http://localhost:4000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./services/vendor-panel:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+  uploads:

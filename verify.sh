@@ -1,0 +1,61 @@
+#!/bin/bash
+
+echo "🔍 Verifying Talaseen Project Setup..."
+echo ""
+
+# Check files
+echo "📁 Checking project structure..."
+[ -f "package.json" ] && echo "✅ Root package.json" || echo "❌ Missing root package.json"
+[ -f "docker-compose.yml" ] && echo "✅ Docker Compose config" || echo "❌ Missing docker-compose.yml"
+[ -f ".env" ] && echo "✅ Environment file" || echo "❌ Missing .env file"
+[ -f "setup.sh" ] && echo "✅ Setup script" || echo "❌ Missing setup.sh"
+
+echo ""
+echo "📂 Checking services..."
+[ -d "services/backend" ] && echo "✅ Backend service" || echo "❌ Missing backend"
+[ -d "services/frontend" ] && echo "✅ Frontend service" || echo "❌ Missing frontend"
+[ -d "services/vendor-panel" ] && echo "✅ Vendor panel" || echo "❌ Missing vendor panel"
+
+echo ""
+echo "📄 Checking documentation..."
+[ -f "README.md" ] && echo "✅ README" || echo "❌ Missing README"
+[ -f "QUICKSTART.md" ] && echo "✅ Quick Start Guide" || echo "❌ Missing QUICKSTART"
+[ -f "PROJECT_SUMMARY.md" ] && echo "✅ Project Summary" || echo "❌ Missing PROJECT_SUMMARY"
+[ -f "8DAY_CHECKLIST.md" ] && echo "✅ 8-Day Checklist" || echo "❌ Missing checklist"
+
+echo ""
+echo "🔧 Checking backend files..."
+[ -f "services/backend/src/index.ts" ] && echo "✅ Backend entry point" || echo "❌ Missing backend index"
+[ -f "services/backend/src/models/User.ts" ] && echo "✅ User model" || echo "❌ Missing User model"
+[ -f "services/backend/src/models/Product.ts" ] && echo "✅ Product model" || echo "❌ Missing Product model"
+[ -f "services/backend/src/routes/auth.routes.ts" ] && echo "✅ Auth routes" || echo "❌ Missing auth routes"
+[ -f "services/backend/src/routes/product.routes.ts" ] && echo "✅ Product routes" || echo "❌ Missing product routes"
+
+echo ""
+echo "🎨 Checking frontend files..."
+[ -f "services/frontend/app/page.tsx" ] && echo "✅ Homepage" || echo "❌ Missing homepage"
+[ -f "services/frontend/app/products/page.tsx" ] && echo "✅ Products page" || echo "❌ Missing products page"
+[ -f "services/frontend/components/Navbar.tsx" ] && echo "✅ Navbar component" || echo "❌ Missing navbar"
+[ -f "services/frontend/components/ProductCard.tsx" ] && echo "✅ Product card" || echo "❌ Missing product card"
+
+echo ""
+echo "🖥️ Checking vendor panel files..."
+[ -f "services/vendor-panel/src/pages/Login.tsx" ] && echo "✅ Login page" || echo "❌ Missing login"
+[ -f "services/vendor-panel/src/pages/Dashboard.tsx" ] && echo "✅ Dashboard" || echo "❌ Missing dashboard"
+[ -f "services/vendor-panel/src/pages/Products.tsx" ] && echo "✅ Products page" || echo "❌ Missing products"
+[ -f "services/vendor-panel/src/pages/AddProduct.tsx" ] && echo "✅ Add product" || echo "❌ Missing add product"
+
+echo ""
+echo "📊 File count summary:"
+echo "- TypeScript/TSX files: $(find . -type f \( -name "*.ts" -o -name "*.tsx" \) ! -path "*/node_modules/*" | wc -l)"
+echo "- Config files: $(find . -type f -name "*.json" ! -path "*/node_modules/*" | wc -l)"
+echo "- Documentation: $(find . -type f -name "*.md" | wc -l)"
+
+echo ""
+echo "✅ Verification complete!"
+echo ""
+echo "🚀 Ready to start? Run:"
+echo "   npm run docker:up    # Start with Docker"
+echo "   OR"
+echo "   ./setup.sh          # Setup for local dev"
+echo "   npm run dev         # Start locally"
