@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== USER & SELLER ====================
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  googleId  String?  @unique
+  avatar    String?
+  role      UserRole @default(USER)
+  seller    Seller?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+model Seller {
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopName     String
+  isApproved   Boolean       @default(false)
+  goldProducts GoldProduct[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([isApproved])
+  @@index([userId])
+}
+
+// ==================== PRODUCTS ====================
+
+model GoldProduct {
+  id                  String           @id @default(uuid())
+  sellerId            String
+  seller              Seller           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  title               String
+  description         String?
+  type                GoldProductType
+  weight              Float // in grams
+  size                Float? // Optional: for rings, bracelets, etc.
+  makingFee           Float
+  profitPercent       Float
+  goldPriceAtCreation Float
+  finalPrice          Float
+  images              ProductImage[]
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@index([sellerId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model ProductImage {
+  id        String      @id @default(uuid())
+  productId String
+  product   GoldProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  isPrimary Boolean     @default(false)
+  createdAt DateTime    @default(now())
+
+  @@index([productId])
+  @@index([isPrimary])
+}
+
+// ==================== ANNOUNCEMENTS ====================
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String?
+  isActive  Boolean  @default(true)
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, priority])
+}
+
+// ==================== ENUMS ====================
+
+enum UserRole {
+  USER
+  SELLER
+  ADMIN
+}
+
+enum GoldProductType {
+  RING
+  BRACELET
+  NECKLACE
+  EARRING
+  BANGLE
+  PENDANT
+  ANKLET
+  CHAIN
+  COIN
+  BAR
+  OTHER
+}

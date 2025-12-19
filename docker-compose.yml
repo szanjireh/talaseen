@@ -44,7 +44,7 @@ services:
       dockerfile: Dockerfile
     container_name: talaseen-frontend
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api
     ports:
       - "3000:3000"
     depends_on:
@@ -53,21 +53,6 @@ services:
       - ./services/frontend:/app
       - /app/node_modules
       - /app/.next
-
-  vendor-panel:
-    build:
-      context: ./services/vendor-panel
-      dockerfile: Dockerfile
-    container_name: talaseen-vendor
-    environment:
-      VITE_API_URL: http://localhost:4000
-    ports:
-      - "5173:5173"
-    depends_on:
-      - backend
-    volumes:
-      - ./services/vendor-panel:/app
-      - /app/node_modules
 
 volumes:
   postgres_data:

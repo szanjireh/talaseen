@@ -1,12 +1,60 @@
-node_modules
-dist
-build
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+*.tsbuildinfo
+
+# Environment variables
 .env
 .env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
 *.log
+logs/
+
+# OS files
 .DS_Store
-coverage
-.next
-uploads
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+.nyc_output/
+
+# Uploads
+uploads/
+
+# Database
 *.db
-.vscode
+*.sqlite
+*.sqlite3
+
+# Docker
+.docker/
+
+# Misc
+.cache/
+temp/
+tmp/

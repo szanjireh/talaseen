@@ -1,175 +1,203 @@
-import Navbar from '../components/Navbar';
-import ProductCard from '../components/ProductCard';
-import Link from 'next/link';
+'use client';
 
-// Mock data - will be replaced with API calls
-const featuredProducts = [
-  {
-    id: '1',
-    title: 'گردنبند طلا با آویز قلب',
-    price: 25000000,
-    images: ['/api/placeholder/400/400'],
-    goldPurity: '18',
-    vendor: { shopName: 'طلای نگین' }
-  },
-  {
-    id: '2',
-    title: 'حلقه ازدواج کلاسیک',
-    price: 18000000,
-    images: ['/api/placeholder/400/400'],
-    goldPurity: '18',
-    vendor: { shopName: 'زرگری امید' }
-  },
-  {
-    id: '3',
-    title: 'دستبند النگویی طرح دار',
-    price: 32000000,
-    images: ['/api/placeholder/400/400'],
-    goldPurity: '21',
-    vendor: { shopName: 'طلا و جواهر آرمان' }
-  },
-  {
-    id: '4',
-    title: 'گوشواره حلقه‌ای بزرگ',
-    price: 22000000,
-    images: ['/api/placeholder/400/400'],
-    goldPurity: '18',
-    vendor: { shopName: 'جواهرسازی پارسیان' }
-  },
-];
+import { Header } from '@/components/header';
+import { AnnouncementBar } from '@/components/announcement-bar';
+import { Card } from '@/components/ui/card';
+import { Sparkles, Shield, Truck, Award } from 'lucide-react';
 
 export default function Home() {
+  // Mock featured products - TODO: Replace with actual API call
+  const featuredProducts = [
+    {
+      id: '1',
+      title: 'Elegant Gold Ring',
+      type: 'RING',
+      weight: 8.5,
+      finalPrice: 1250,
+      makingFee: 85,
+      profitPercent: 12,
+      seller: { shopName: "Gold Haven" },
+      image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop',
+    },
+    {
+      id: '2',
+      title: 'Classic Gold Necklace',
+      type: 'NECKLACE',
+      weight: 25.3,
+      finalPrice: 2890,
+      makingFee: 180,
+      profitPercent: 15,
+      seller: { shopName: "Royal Jewelry" },
+      image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=400&fit=crop',
+    },
+    {
+      id: '3',
+      title: 'Gold Bracelet',
+      type: 'BRACELET',
+      weight: 15.7,
+      finalPrice: 1680,
+      makingFee: 120,
+      profitPercent: 10,
+      seller: { shopName: "Artisan Gold" },
+      image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop',
+    },
+    {
+      id: '4',
+      title: 'Diamond Earrings',
+      type: 'EARRING',
+      weight: 6.2,
+      finalPrice: 3200,
+      makingFee: 250,
+      profitPercent: 18,
+      seller: { shopName: "Luxury Gems" },
+      image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=400&fit=crop',
+    },
+  ];
+
+  const categories = [
+    { name: 'انگشتر', count: 234 },
+    { name: 'گردنبند', count: 156 },
+    { name: 'دستبند', count: 189 },
+    { name: 'گوشواره', count: 278 },
+    { name: 'النگو', count: 145 },
+    { name: 'آویز', count: 98 },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      
-      {/* Hero Section - Etsy inspired */}
-      <section className="bg-gradient-to-r from-gold-50 to-gold-100 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-              بازار طلای تلاسین
+    <div className="min-h-screen bg-white">
+      <Header />
+      <AnnouncementBar />
+
+      <main>
+        {/* Hero Section */}
+        <section className="bg-gradient-to-b from-orange-50 to-white py-16">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              کشف جواهرات طلای منحصر به فرد
             </h1>
-            <p className="text-xl text-gray-700 mb-8">
-              کشف محصولات منحصر به فرد از بهترین زرگران ایران
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              هزاران قطعه طلای دست‌ساز از فروشندگان معتبر را مرور کنید
             </p>
-            <Link href="/products" className="btn-primary inline-block">
-              مشاهده همه محصولات
-            </Link>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Categories - Etsy style */}
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-8 text-center">خرید بر اساس دسته‌بندی</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {['گردنبند', 'حلقه', 'دستبند', 'گوشواره', 'النگو', 'آویز'].map((category) => (
-              <Link 
-                key={category}
-                href={`/products?category=${category}`}
-                className="text-center group"
-              >
-                <div className="aspect-square bg-gray-100 rounded-full mb-3 overflow-hidden group-hover:shadow-lg transition-shadow">
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gold-200 to-gold-400">
-                    <span className="text-4xl">💍</span>
-                  </div>
+        {/* Categories */}
+        <section className="py-12 border-b">
+          <div className="container mx-auto px-4">
+            <div className="flex gap-6 overflow-x-auto pb-4">
+              {categories.map((category) => (
+                <button
+                  key={category.name}
+                  className="flex-shrink-0 px-6 py-3 rounded-full border-2 border-gray-200 hover:border-orange-600 hover:text-orange-600 transition-colors"
+                >
+                  <span className="font-medium">{category.name}</span>
+                  <span className="ml-2 text-sm text-gray-500">({category.count})</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Products */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-right">محصولات ویژه</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.map((product) => (
+                <a href={`/products/${product.id}`} key={product.id}>
+                  <Card className="group cursor-pointer overflow-hidden border-gray-200 hover:shadow-lg transition-all">
+                    <div className="aspect-square overflow-hidden bg-gray-100">
+                      <img
+                        src={product.image}
+                        alt={product.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-4 space-y-2">
+                      <h3 className="font-semibold text-gray-900 line-clamp-2 min-h-[3rem] text-right">
+                        {product.title}
+                      </h3>
+                      
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{product.weight} گرم</span>
+                          <span className="text-gray-600">:وزن</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium" suppressHydrationWarning>{product.makingFee.toLocaleString('fa-IR')} تومان</span>
+                          <span className="text-gray-600">:اجرت</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-green-600" suppressHydrationWarning>{product.profitPercent.toLocaleString('fa-IR')}%</span>
+                          <span className="text-gray-600">:سود</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t">
+                        <p className="text-xl font-bold text-orange-600 text-right" suppressHydrationWarning>
+                          {product.finalPrice.toLocaleString('fa-IR')} تومان
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                          {product.type}
+                        </span>
+                        <p className="text-xs text-gray-500">
+                          فروشنده: {product.seller.shopName}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Trust Badges */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-4">
+                  <Sparkles className="w-8 h-8 text-orange-600" />
                 </div>
-                <p className="font-medium group-hover:text-gold-600">{category}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold">محصولات ویژه</h2>
-            <Link href="/products" className="text-sm hover:text-gold-600">
-              مشاهده همه ←
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us - Etsy inspired */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-12 text-center">چرا تلاسین؟</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gold-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">✨</span>
+                <h3 className="font-semibold text-gray-900 mb-2">کیفیت تضمین شده</h3>
+                <p className="text-sm text-gray-600">طلای ۱۰۰٪ اصل</p>
               </div>
-              <h3 className="font-bold mb-2">کیفیت تضمین شده</h3>
-              <p className="text-gray-600">همه محصولات با گواهی اصالت و عیار</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gold-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🛡️</span>
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-4">
+                  <Shield className="w-8 h-8 text-orange-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">پرداخت امن</h3>
+                <p className="text-sm text-gray-600">ایمن و رمزگذاری شده</p>
               </div>
-              <h3 className="font-bold mb-2">خرید امن</h3>
-              <p className="text-gray-600">پرداخت امن و ضمانت بازگشت وجه</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gold-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🚚</span>
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-4">
+                  <Truck className="w-8 h-8 text-orange-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">ارسال سریع</h3>
+                <p className="text-sm text-gray-600">ارسال رایگان بالای ۵۰۰ هزار تومان</p>
               </div>
-              <h3 className="font-bold mb-2">ارسال سریع</h3>
-              <p className="text-gray-600">ارسال به سراسر کشور با بیمه کامل</p>
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-4">
+                  <Award className="w-8 h-8 text-orange-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">فروشندگان معتبر</h3>
+                <p className="text-sm text-gray-600">فقط فروشندگان تایید شده</p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">تلاسین</h3>
-              <p className="text-gray-400 text-sm">
-                بزرگترین بازار آنلاین طلا و جواهرات ایران
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">خرید</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/products">همه محصولات</Link></li>
-                <li><Link href="/vendors">فروشندگان</Link></li>
-                <li><Link href="/products?featured=true">محصولات ویژه</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">فروش</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/vendor/register">ثبت نام فروشنده</Link></li>
-                <li><Link href="/vendor/login">ورود فروشنده</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">پشتیبانی</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/about">درباره ما</Link></li>
-                <li><Link href="/contact">تماس با ما</Link></li>
-                <li><Link href="/terms">قوانین و مقررات</Link></li>
-              </ul>
-            </div>
+        {/* Footer */}
+        <footer className="py-12 border-t">
+          <div className="container mx-auto px-4 text-center text-sm text-gray-600">
+            <p>© ۱۴۰۳ تلاسین. تمامی حقوق محفوظ است.</p>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>© 2024 تلاسین. تمامی حقوق محفوظ است.</p>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </main>
     </div>
   );
 }

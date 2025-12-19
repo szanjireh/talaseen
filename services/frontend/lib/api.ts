@@ -1,0 +1,41 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+
+export const api = {
+  // Auth endpoints
+  auth: {
+    googleLogin: () => `${API_URL}/auth/google`,
+    getProfile: () => `${API_URL}/auth/me`,
+    requestSeller: () => `${API_URL}/auth/request-seller`,
+    getMySeller: () => `${API_URL}/auth/my-seller`,
+    getPendingSellers: () => `${API_URL}/auth/admin/pending-sellers`,
+    approveSeller: (id: string) => `${API_URL}/auth/admin/sellers/${id}/approve`,
+    rejectSeller: (id: string) => `${API_URL}/auth/admin/sellers/${id}/reject`,
+  },
+  
+  // Product endpoints (gold products)
+  products: {
+    search: (query: string, params?: Record<string, string>) => {
+      const searchParams = new URLSearchParams({ q: query, ...params });
+      return `${API_URL}/products/search?${searchParams}`;
+    },
+    getAll: (params?: Record<string, string>) => {
+      const query = params ? `?${new URLSearchParams(params)}` : '';
+      return `${API_URL}/products${query}`;
+    },
+    getById: (id: string) => `${API_URL}/products/${id}`,
+    create: () => `${API_URL}/products`,
+    update: (id: string) => `${API_URL}/products/${id}`,
+    delete: (id: string) => `${API_URL}/products/${id}`,
+  },
+
+  // Announcements endpoints
+  announcements: {
+    getActive: () => `${API_URL}/announcements/active`,
+    getAll: () => `${API_URL}/announcements`,
+    create: () => `${API_URL}/announcements`,
+    update: (id: string) => `${API_URL}/announcements/${id}`,
+    delete: (id: string) => `${API_URL}/announcements/${id}`,
+  },
+};
+
+export default api;

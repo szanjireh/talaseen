@@ -1,19 +1,33 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from "next";
+import { Vazirmatn } from "next/font/google";
+import "./globals.css";
+import { AuthProvider } from "@/lib/auth-context";
+
+const vazir = Vazirmatn({
+  variable: "--font-sans",
+  subsets: ["arabic"],
+});
 
 export const metadata: Metadata = {
-  title: 'Talaseen - Iranian Gold Marketplace',
-  description: 'Premium gold jewelry marketplace featuring Iranian gold sellers',
-}
+  title: "تلاسین - بازار طلا و جواهر",
+  description: "بازار چند فروشنده‌ای طلا و جواهر",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body
+        className={`${vazir.variable} antialiased`}
+      >
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
-  )
+  );
 }
+
