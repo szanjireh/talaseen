@@ -360,7 +360,7 @@ function AdminContent() {
                     <Input
                       value={announcementTitle}
                       onChange={(e) => setAnnouncementTitle(e.target.value)}
-                      placeholder="e.g., 🏆 Top 100 sellers this month"
+                      placeholder="مثال: 🏆 فروشندگان برتر هر ماه رو ببینید"
                       className="mt-1"
                     />
                   </div>

@@ -9,7 +9,7 @@ const vazir = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "تلاسین - بازار طلا و جواهر",
+  title: "طلاسین - بازار طلا و جواهر",
   description: "بازار چند فروشنده‌ای طلا و جواهر",
 };
 

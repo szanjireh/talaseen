@@ -52,7 +52,7 @@ export function AnnouncementBar() {
       setAnnouncements([
         {
           id: '1',
-          title: '🏆 Top 100 sellers this month - Check them out!',
+          title: '🏆 فروشندگان برتر هر ماه رو ببینید',
           content: null,
           isActive: true,
           priority: 1,

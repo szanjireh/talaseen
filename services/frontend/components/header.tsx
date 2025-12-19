@@ -26,7 +26,7 @@ export function Header() {
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-orange-600">تلاسین</div>
+            <div className="text-2xl font-bold text-orange-600">طلاسین</div>
           </Link>
 
           {/* Search Bar */}
@@ -37,7 +37,7 @@ export function Header() {
             <div className="relative w-full">
               <Input
                 type="text"
-                placeholder="Search for gold jewelry..."
+                placeholder="جستجو در طلاسین..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-12 pr-12 rounded-full border-2 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
@@ -76,13 +76,13 @@ export function Header() {
                   onClick={() => router.push('/login')}
                   className="hover:text-orange-600"
                 >
-                  Sign in
+                  ورود
                 </Button>
                 <Button
                   onClick={() => router.push('/login')}
                   className="bg-orange-600 hover:bg-orange-700"
                 >
-                  Sell on Talaseen
+                  فروش در طلاسین
                 </Button>
               </>
             )}
@@ -95,7 +95,7 @@ export function Header() {
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Search for gold jewelry..."
+                placeholder="جستجو در طلاسین..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-11 pr-11 rounded-full border-2 border-gray-300 focus:border-orange-500"

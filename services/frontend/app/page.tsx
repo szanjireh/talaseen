@@ -73,10 +73,10 @@ export default function Home() {
         <section className="bg-gradient-to-b from-orange-50 to-white py-16">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              کشف جواهرات طلای منحصر به فرد
+              طلا یاب
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              هزاران قطعه طلای دست‌ساز از فروشندگان معتبر را مرور کنید
+              هزاران طلای بازار را در بازار مجازی طلا ببینید
             </p>
           </div>
         </section>
@@ -194,7 +194,8 @@ export default function Home() {
         {/* Footer */}
         <footer className="py-12 border-t">
           <div className="container mx-auto px-4 text-center text-sm text-gray-600">
-            <p>© ۱۴۰۳ تلاسین. تمامی حقوق محفوظ است.</p>
+            <p>ایمیل: Talagoldseen@gmail.com</p>
+            <p className="mt-2">تمامی حقوق محفوظ است</p>
           </div>
         </footer>
       </main>
