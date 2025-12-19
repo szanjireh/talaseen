@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AddProductForm } from '@/components/add-product-form';
+import { EditProductForm } from '@/components/edit-product-form';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
@@ -27,6 +28,7 @@ function DashboardContent() {
   const { user, logout, token } = useAuth();
   const router = useRouter();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,8 +63,13 @@ function DashboardContent() {
     fetchProducts();
   };
 
+  const handleProductUpdated = () => {
+    setEditingProduct(null);
+    fetchProducts();
+  };
+
   const handleDeleteProduct = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) {
+    if (!confirm('آیا مطمئن هستید که می‌خواهید این محصول را حذف کنید؟')) {
       return;
     }
 
@@ -73,14 +80,14 @@ function DashboardContent() {
       });
 
       if (response.ok) {
-        alert('Product deleted successfully');
+        alert('محصول با موفقیت حذف شد');
         fetchProducts();
       } else {
-        alert('Failed to delete product');
+        alert('حذف محصول ناموفق بود');
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('Failed to delete product');
+      alert('حذف محصول ناموفق بود');
     }
   };
 
@@ -94,19 +101,19 @@ function DashboardContent() {
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-yellow-600 bg-clip-text text-transparent">
-            Seller Dashboard
+            پنل فروشنده
           </h1>
           <Button onClick={handleLogout} variant="outline">
-            Logout
+            خروج
           </Button>
         </div>
       </nav>
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <h2 className="text-3xl font-bold mb-2">Welcome back, {user?.name}!</h2>
+          <h2 className="text-3xl font-bold mb-2">خوش آمدید، {user?.name}!</h2>
           <p className="text-muted-foreground">
-            Manage your shop: <span className="font-semibold">{user?.shopName}</span>
+            مدیریت فروشگاه: <span className="font-semibold">{user?.shopName}</span>
           </p>
         </div>
 
@@ -115,7 +122,7 @@ function DashboardContent() {
           <Card className="mb-6 border-yellow-300 bg-yellow-50">
             <CardContent className="py-4">
               <p className="text-yellow-800 font-semibold">
-                ⏳ Your seller account is pending admin approval. You'll be able to add products once approved.
+                ⏳ حساب فروشنده شما در انتظار تایید ادمین است. پس از تایید می‌توانید محصول اضافه کنید.
               </p>
             </CardContent>
           </Card>
@@ -127,9 +134,9 @@ function DashboardContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
-                My Products
+                محصولات من
               </CardTitle>
-              <CardDescription>Total inventory</CardDescription>
+              <CardDescription>مجموع موجودی</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold">{products.length}</p>
@@ -138,8 +145,8 @@ function DashboardContent() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Total Value</CardTitle>
-              <CardDescription>Inventory worth</CardDescription>
+              <CardTitle>ارزش کل</CardTitle>
+              <CardDescription>ارزش موجودی</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-orange-600">
@@ -150,12 +157,12 @@ function DashboardContent() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Status</CardTitle>
-              <CardDescription>Account approval</CardDescription>
+              <CardTitle>وضعیت</CardTitle>
+              <CardDescription>تایید حساب</CardDescription>
             </CardHeader>
             <CardContent>
               <span className={`text-lg font-semibold ${user?.isApproved ? 'text-green-600' : 'text-yellow-600'}`}>
-                {user?.isApproved ? '✅ Approved' : '⏳ Pending'}
+                {user?.isApproved ? '✅ تایید شده' : '⏳ در انتظار'}
               </span>
             </CardContent>
           </Card>
@@ -170,7 +177,7 @@ function DashboardContent() {
               size="lg"
             >
               <Plus className="mr-2 h-5 w-5" />
-              Add New Product
+              افزودن محصول جدید
             </Button>
           </div>
         )}
@@ -185,28 +192,39 @@ function DashboardContent() {
           </div>
         )}
 
+        {/* Edit Product Form */}
+        {editingProduct && (
+          <div className="mb-8">
+            <EditProductForm
+              product={editingProduct}
+              onSuccess={handleProductUpdated}
+              onCancel={() => setEditingProduct(null)}
+            />
+          </div>
+        )}
+
         {/* Products List */}
         {user?.isApproved && (
           <Card>
             <CardHeader>
-              <CardTitle>Your Products</CardTitle>
+              <CardTitle>محصولات شما</CardTitle>
               <CardDescription>
-                {products.length} {products.length === 1 ? 'product' : 'products'} listed
+                {products.length} محصول ثبت شده
               </CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Loading products...</p>
+                  <p className="mt-4 text-gray-600">در حال بارگذاری محصولات...</p>
                 </div>
               ) : products.length === 0 ? (
                 <div className="text-center py-12">
                   <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-4">No products yet</p>
+                  <p className="text-gray-600 mb-4">هنوز محصولی ندارید</p>
                   <Button onClick={() => setShowAddForm(true)} variant="outline">
                     <Plus className="mr-2 h-4 w-4" />
-                    Add Your First Product
+                    اولین محصول خود را اضافه کنید
                   </Button>
                 </div>
               ) : (
@@ -235,17 +253,25 @@ function DashboardContent() {
                           </span>
                         </div>
                         <div className="flex gap-3 text-xs text-gray-500 mt-1">
-                          <span>Making Fee: ${product.makingFee}</span>
+                          <span>هزینه ساخت: ${product.makingFee}</span>
                           <span>•</span>
-                          <span>Profit: {product.profitPercent}%</span>
+                          <span>سود: {product.profitPercent}%</span>
                         </div>
                       </div>
                       <div className="flex gap-2">
                         <Link href={`/products/${product.id}`}>
                           <Button variant="outline" size="sm">
-                            View
+                            مشاهده
                           </Button>
                         </Link>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingProduct(product)}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"

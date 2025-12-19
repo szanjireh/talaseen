@@ -9,7 +9,10 @@
     "start:prod": "node dist/main",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",
-    "studio": "npx prisma studio"
+    "studio": "npx prisma studio",
+    "seed": "npx ts-node prisma/seed.ts",
+    "create-admin": "npx ts-node scripts/create-admin.ts",
+    "promote-admin": "npx ts-node scripts/promote-to-admin.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",

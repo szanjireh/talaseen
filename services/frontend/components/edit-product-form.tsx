@@ -33,25 +33,24 @@ const PRODUCT_TYPES = [
   'OTHER',
 ];
 
-interface AddProductFormProps {
+interface EditProductFormProps {
+  product: any;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
+export function EditProductForm({ product, onSuccess, onCancel }: EditProductFormProps) {
   const { token } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [formData, setFormData] = useState<ProductFormData>({
-    title: '',
-    description: '',
-    type: 'RING',
-    weight: '',
-    size: '',
-    makingFee: '',
-    profitPercent: '',
-    goldPriceAtCreation: '',
+    title: product.title || '',
+    description: product.description || '',
+    type: product.type || 'RING',
+    weight: product.weight?.toString() || '',
+    size: product.size?.toString() || '',
+    makingFee: product.makingFee?.toString() || '',
+    profitPercent: product.profitPercent?.toString() || '',
+    goldPriceAtCreation: product.goldPriceAtCreation?.toString() || '',
   });
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
 
@@ -76,30 +75,6 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length + imageFiles.length > 5) {
-      alert('حداکثر 5 تصویر مجاز است');
-      return;
-    }
-
-    setImageFiles((prev) => [...prev, ...files]);
-
-    // Create previews
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviews((prev) => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const removeImage = (index: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -108,20 +83,8 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
       return;
     }
 
-    if (imageFiles.length === 0) {
-      alert('لطفاً حداقل یک تصویر برای محصول آپلود کنید');
-      return;
-    }
-
     try {
       setLoading(true);
-
-      // First, upload images (in a real app, you'd use a service like Cloudinary or S3)
-      // For MVP, we'll use placeholder URLs
-      const imageUrls = imageFiles.map((_, index) => ({
-        url: `https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&h=800&fit=crop&q=${index}`,
-        isPrimary: index === 0,
-      }));
 
       const productData = {
         title: formData.title,
@@ -133,11 +96,10 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
         profitPercent: parseFloat(formData.profitPercent),
         goldPriceAtCreation: parseFloat(formData.goldPriceAtCreation),
         finalPrice: calculatedPrice,
-        images: imageUrls,
       };
 
-      const response = await fetch(api.products.create(), {
-        method: 'POST',
+      const response = await fetch(api.products.update(product.id), {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -146,15 +108,15 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
       });
 
       if (response.ok) {
-        alert('محصول با موفقیت ایجاد شد!');
+        alert('محصول با موفقیت به‌روزرسانی شد!');
         onSuccess();
       } else {
         const error = await response.json();
-        alert(error.message || 'ایجاد محصول ناموفق بود');
+        alert(error.message || 'به‌روزرسانی محصول ناموفق بود');
       }
     } catch (error) {
-      console.error('Error creating product:', error);
-      alert('ایجاد محصول ناموفق بود. لطفاً دوباره امتحان کنید.');
+      console.error('Error updating product:', error);
+      alert('به‌روزرسانی محصول ناموفق بود. لطفاً دوباره امتحان کنید.');
     } finally {
       setLoading(false);
     }
@@ -164,53 +126,9 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>افزودن محصول جدید</CardTitle>
+          <CardTitle>ویرایش محصول</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Product Images */}
-          <div>
-            <label className="text-sm font-medium mb-2 block">
-              تصاویر محصول (حداکثر 5) *
-            </label>
-            <div className="grid grid-cols-5 gap-4 mb-4">
-              {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative aspect-square">
-                  <img
-                    src={preview}
-                    alt={`Preview ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg border-2 border-gray-200"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                  {index === 0 && (
-                    <span className="absolute bottom-1 left-1 bg-orange-600 text-white text-xs px-2 py-0.5 rounded">
-                      اصلی
-                    </span>
-                  )}
-                </div>
-              ))}
-              {imageFiles.length < 5 && (
-                <label className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-orange-600 hover:bg-orange-50 transition-colors">
-                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <span className="text-xs text-gray-500">آپلود</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
-              )}
-            </div>
-            <p className="text-xs text-gray-500">اولین تصویر به عنوان تصویر اصلی خواهد بود</p>
-          </div>
-
           {/* Basic Info */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
@@ -375,7 +293,7 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
               disabled={loading || calculatedPrice === 0}
               className="flex-1 bg-orange-600 hover:bg-orange-700"
             >
-              {loading ? 'در حال ایجاد...' : 'ایجاد محصول'}
+              {loading ? 'در حال به‌روزرسانی...' : 'به‌روزرسانی محصول'}
             </Button>
             <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
               لغو
