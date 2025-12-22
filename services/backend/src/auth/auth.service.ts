@@ -35,10 +35,10 @@ export class AuthService {
   }
 
   async login(user: any) {
-    // Fetch seller info if user is a seller
-    const seller = user.role === UserRole.SELLER 
-      ? await this.prisma.seller.findUnique({ where: { userId: user.id } })
-      : null;
+    // Fetch seller info if user has a seller profile (can be ADMIN or SELLER)
+    const seller = await this.prisma.seller.findUnique({ 
+      where: { userId: user.id } 
+    });
 
     const payload = { sub: user.id, email: user.email, role: user.role };
     return {
@@ -66,11 +66,6 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    // Check if user is already admin
-    if (user.role === UserRole.ADMIN) {
-      throw new ForbiddenException('Admins cannot become sellers');
-    }
-
     // Check if seller profile already exists
     if (user.seller) {
       throw new ForbiddenException('Seller profile already exists');
@@ -85,11 +80,13 @@ export class AuthService {
       },
     });
 
-    // Update user role to SELLER
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { role: UserRole.SELLER },
-    });
+    // Update user role to SELLER only if not ADMIN
+    if (user.role !== UserRole.ADMIN) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { role: UserRole.SELLER },
+      });
+    }
 
     return seller;
   }
@@ -158,13 +155,15 @@ export class AuthService {
       throw new NotFoundException('Seller not found');
     }
 
-    // Delete seller and revert user role to USER
+    // Delete seller and revert user role to USER (only if not ADMIN)
     await this.prisma.$transaction([
       this.prisma.seller.delete({ where: { id: sellerId } }),
-      this.prisma.user.update({
-        where: { id: seller.userId },
-        data: { role: UserRole.USER },
-      }),
+      ...(seller.user.role !== UserRole.ADMIN ? [
+        this.prisma.user.update({
+          where: { id: seller.userId },
+          data: { role: UserRole.USER },
+        })
+      ] : []),
     ]);
 
     return { message: 'Seller rejected successfully' };

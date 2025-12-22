@@ -1,11 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { Header } from '@/components/header';
 import { AnnouncementBar } from '@/components/announcement-bar';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Shield, Truck, Award } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BecomeSellerDialog } from '@/components/become-seller-dialog';
+import { useAuth } from '@/lib/auth-context';
+import { Sparkles, Shield, Truck, Award, Store } from 'lucide-react';
 
 export default function Home() {
+  const { isAuthenticated, isUser } = useAuth();
+  const [showSellerDialog, setShowSellerDialog] = useState(false);
   // Mock featured products - TODO: Replace with actual API call
   const featuredProducts = [
     {
@@ -75,9 +81,22 @@ export default function Home() {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               طلا یاب
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
               هزاران طلای بازار را در بازار مجازی طلا ببینید
             </p>
+            
+            {/* Become Seller Button - Only show for authenticated USER role */}
+            {isAuthenticated && isUser && (
+              <div className="flex justify-center">
+                <Button
+                  onClick={() => setShowSellerDialog(true)}
+                  className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
+                >
+                  <Store className="w-5 h-5 ml-2" />
+                  درخواست فروشندگی
+                </Button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -199,6 +218,12 @@ export default function Home() {
           </div>
         </footer>
       </main>
+
+      {/* Become Seller Dialog */}
+      <BecomeSellerDialog 
+        isOpen={showSellerDialog} 
+        onClose={() => setShowSellerDialog(false)} 
+      />
     </div>
   );
 }

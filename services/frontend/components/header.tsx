@@ -3,15 +3,22 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/lib/auth-context';
-import { Search } from 'lucide-react';
+import { Search, LogOut, User, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export function Header() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setShowUserMenu(false);
+    router.push('/');
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,18 +63,69 @@ export function Header() {
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                <span className="hidden sm:inline text-sm text-gray-700">
-                  Hi, {user?.name?.split(' ')[0] || 'User'}
-                </span>
                 {user?.role === 'SELLER' || user?.role === 'ADMIN' ? (
                   <Button
                     variant="outline"
                     onClick={() => router.push(user.role === 'ADMIN' ? '/admin' : '/dashboard')}
                     className="border-gray-300 hover:border-orange-600 hover:text-orange-600"
                   >
-                    {user.role === 'ADMIN' ? 'Admin Panel' : 'Seller Panel'}
+                    {user.role === 'ADMIN' ? 'پنل مدیر' : 'پنل فروشنده'}
                   </Button>
                 ) : null}
+                
+                {/* User Menu */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    {user?.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name || 'User'} 
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+                        <User className="w-5 h-5 text-orange-600" />
+                      </div>
+                    )}
+                    <span className="hidden sm:inline text-sm text-gray-700 font-medium">
+                      {user?.name?.split(' ')[0] || 'کاربر'}
+                    </span>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {showUserMenu && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-10" 
+                        onClick={() => setShowUserMenu(false)}
+                      />
+                      <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-sm font-medium text-gray-900 text-right">
+                            {user?.name || 'کاربر'}
+                          </p>
+                          <p className="text-xs text-gray-500 text-right mt-1">
+                            {user?.email}
+                          </p>
+                          <p className="text-xs text-orange-600 font-medium mt-1 text-right">
+                            {user?.role === 'ADMIN' ? 'مدیر' : user?.role === 'SELLER' ? 'فروشنده' : 'کاربر'}
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-right"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>خروج</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </>
             ) : (
               <>

@@ -23,11 +23,12 @@ services:
       context: ./services/backend
       dockerfile: Dockerfile
     container_name: talaseen-backend
+    env_file:
+      - .env
+      - ./services/backend/.env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-talaseen}:${POSTGRES_PASSWORD:-talaseen123}@postgres:5432/${POSTGRES_DB:-talaseen}
       PORT: 4000
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     ports:
       - "4000:4000"
     depends_on:
