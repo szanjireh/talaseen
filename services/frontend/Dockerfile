@@ -12,5 +12,5 @@ RUN npm run build
 
 EXPOSE 3000
 
-# Start in production mode
-CMD ["npm", "run", "start"]
+# Start in production mode, ensure Next.js listens on all interfaces
+CMD ["npx", "next", "start", "-H", "0.0.0.0"]

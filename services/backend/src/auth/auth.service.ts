@@ -14,11 +14,27 @@ export class AuthService {
     const { id, emails, displayName, photos } = profile;
     const email = emails[0].value;
 
-    let user = await this.prisma.user.findUnique({
-      where: { googleId: id },
-    });
+    // Try to find by googleId first, then fall back to email
+    let user = await this.prisma.user.findUnique({ where: { googleId: id } });
 
     if (!user) {
+      // If there's a user with the same email (created manually), attach googleId to avoid unique email error
+      user = await this.prisma.user.findUnique({ where: { email } });
+    }
+
+    if (user) {
+      // Ensure googleId and latest profile info are set
+      if (!user.googleId || user.googleId !== id || user.name !== displayName || user.avatar !== photos?.[0]?.value) {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            googleId: id,
+            name: displayName,
+            avatar: photos?.[0]?.value,
+          },
+        });
+      }
+    } else {
       // Create new user with USER role by default
       user = await this.prisma.user.create({
         data: {
