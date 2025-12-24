@@ -59,11 +59,12 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
   useEffect(() => {
     const weight = parseFloat(formData.weight) || 0;
     const goldPrice = parseFloat(formData.goldPriceAtCreation) || 0;
-    const makingFee = parseFloat(formData.makingFee) || 0;
+    const makingFeePercent = parseFloat(formData.makingFee) || 0;
     const profitPercent = parseFloat(formData.profitPercent) || 0;
 
     if (weight > 0 && goldPrice > 0) {
       const goldCost = weight * goldPrice;
+      const makingFee = goldCost * (makingFeePercent / 100);
       const costWithFee = goldCost + makingFee;
       const finalPrice = costWithFee * (1 + profitPercent / 100);
       setCalculatedPrice(finalPrice);
@@ -116,12 +117,30 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
     try {
       setLoading(true);
 
-      // First, upload images (in a real app, you'd use a service like Cloudinary or S3)
-      // For MVP, we'll use placeholder URLs
-      const imageUrls = imageFiles.map((_, index) => ({
-        url: `https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&h=800&fit=crop&q=${index}`,
-        isPrimary: index === 0,
-      }));
+      // Upload images to server
+      const uploadedImages = [];
+      for (let i = 0; i < imageFiles.length; i++) {
+        const formData = new FormData();
+        formData.append('file', imageFiles[i]);
+
+        const uploadResponse = await fetch(api.upload.image(), {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('آپلود تصویر ناموفق بود');
+        }
+
+        const uploadData = await uploadResponse.json();
+        uploadedImages.push({
+          url: uploadData.url,
+          isPrimary: i === 0,
+        });
+      }
 
       const productData = {
         title: formData.title,
@@ -133,7 +152,7 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
         profitPercent: parseFloat(formData.profitPercent),
         goldPriceAtCreation: parseFloat(formData.goldPriceAtCreation),
         finalPrice: calculatedPrice,
-        images: imageUrls,
+        images: uploadedImages,
       };
 
       const response = await fetch(api.products.create(), {
@@ -300,15 +319,15 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
 
                 <div>
                   <label className="text-sm font-medium mb-2 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
-                    هزینه ساخت ($) *
+                    <Percent className="h-4 w-4" />
+                    درصد اجرت ساخت (%) *
                   </label>
                   <Input
                     type="number"
-                    step="0.01"
+                    step="0.1"
                     value={formData.makingFee}
                     onChange={(e) => handleInputChange('makingFee', e.target.value)}
-                    placeholder="مثلاً: 100"
+                    placeholder="مثلاً: 15"
                     required
                   />
                 </div>
@@ -341,13 +360,15 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>هزینه ساخت:</span>
-                      <span className="font-medium">${parseFloat(formData.makingFee || '0').toFixed(2)}</span>
+                      <span>اجرت ساخت ({formData.makingFee}%):</span>
+                      <span className="font-medium">
+                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) * ((parseFloat(formData.makingFee) || 0) / 100)).toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>جمع جزء:</span>
                       <span className="font-medium">
-                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) + (parseFloat(formData.makingFee) || 0)).toFixed(2)}
+                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) * (1 + (parseFloat(formData.makingFee) || 0) / 100)).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between">

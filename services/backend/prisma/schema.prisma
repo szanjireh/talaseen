@@ -17,6 +17,7 @@ model User {
   avatar    String?
   role      UserRole @default(USER)
   seller    Seller?
+  likes     Like[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -54,6 +55,7 @@ model GoldProduct {
   goldPriceAtCreation Float
   finalPrice          Float
   images              ProductImage[]
+  likes               Like[]
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
 
@@ -86,6 +88,21 @@ model Announcement {
   updatedAt DateTime @updatedAt
 
   @@index([isActive, priority])
+}
+
+// ==================== LIKES ====================
+
+model Like {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   GoldProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
 }
 
 // ==================== ENUMS ====================

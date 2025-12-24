@@ -58,11 +58,12 @@ export function EditProductForm({ product, onSuccess, onCancel }: EditProductFor
   useEffect(() => {
     const weight = parseFloat(formData.weight) || 0;
     const goldPrice = parseFloat(formData.goldPriceAtCreation) || 0;
-    const makingFee = parseFloat(formData.makingFee) || 0;
+    const makingFeePercent = parseFloat(formData.makingFee) || 0;
     const profitPercent = parseFloat(formData.profitPercent) || 0;
 
     if (weight > 0 && goldPrice > 0) {
       const goldCost = weight * goldPrice;
+      const makingFee = goldCost * (makingFeePercent / 100);
       const costWithFee = goldCost + makingFee;
       const finalPrice = costWithFee * (1 + profitPercent / 100);
       setCalculatedPrice(finalPrice);
@@ -218,15 +219,15 @@ export function EditProductForm({ product, onSuccess, onCancel }: EditProductFor
 
                 <div>
                   <label className="text-sm font-medium mb-2 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
-                    هزینه ساخت ($) *
+                    <Percent className="h-4 w-4" />
+                    درصد اجرت ساخت (%) *
                   </label>
                   <Input
                     type="number"
-                    step="0.01"
+                    step="0.1"
                     value={formData.makingFee}
                     onChange={(e) => handleInputChange('makingFee', e.target.value)}
-                    placeholder="مثلاً: 100"
+                    placeholder="مثلاً: 15"
                     required
                   />
                 </div>
@@ -259,19 +260,21 @@ export function EditProductForm({ product, onSuccess, onCancel }: EditProductFor
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>هزینه ساخت:</span>
-                      <span className="font-medium">${parseFloat(formData.makingFee || '0').toFixed(2)}</span>
+                      <span>اجرت ساخت ({formData.makingFee}%):</span>
+                      <span className="font-medium">
+                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) * ((parseFloat(formData.makingFee) || 0) / 100)).toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>جمع جزء:</span>
                       <span className="font-medium">
-                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) + (parseFloat(formData.makingFee) || 0)).toFixed(2)}
+                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) * (1 + (parseFloat(formData.makingFee) || 0) / 100)).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>سود ({formData.profitPercent}%):</span>
                       <span className="font-medium text-green-600">
-                        +${((calculatedPrice - (((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) + (parseFloat(formData.makingFee) || 0)))).toFixed(2)}
+                        +${((calculatedPrice - (((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) * (1 + (parseFloat(formData.makingFee) || 0) / 100)))).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between pt-2 border-t-2 border-blue-300 mt-2">

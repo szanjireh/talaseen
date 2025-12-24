@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { Seller, GoldProduct } from '@/lib/types';
+import { getImageUrl } from '@/lib/utils';
 
 interface Announcement {
   id: string;
@@ -129,8 +130,9 @@ function AdminContent() {
   };
 
   const handleLogout = () => {
+    console.log('[ADMIN] Logging out...');
     logout();
-    router.push('/login');
+    router.replace('/login');
   };
 
   const handleCreateAnnouncement = async () => {
@@ -224,9 +226,15 @@ function AdminContent() {
     <div dir="rtl" className="min-h-screen bg-gradient-to-b from-orange-50 to-white dark:from-slate-950 dark:to-slate-900 font-vazirmatn">
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
-            پنل مدیریت
-          </h1>
+          <div className="flex items-center gap-4">
+            <a href="/" className="text-2xl font-bold text-orange-600 hover:text-orange-700 transition-colors">
+              طلاسین
+            </a>
+            <span className="text-gray-400">|</span>
+            <h1 className="text-xl font-semibold text-gray-700">
+              پنل مدیریت
+            </h1>
+          </div>
           <div className="flex items-center gap-2">
             <Button onClick={handleLogout} variant="outline">
               خروج
@@ -463,7 +471,7 @@ function AdminContent() {
                         {/* Product Image */}
                         <div className="w-24 h-24 flex-shrink-0">
                           <img
-                            src={product.images?.[0]?.url || 'https://placehold.co/96x96?text=No+Image'}
+                            src={product.images?.[0]?.url ? getImageUrl(product.images[0].url) : 'https://placehold.co/96x96?text=No+Image'}
                             alt={product.title}
                             className="w-full h-full object-cover rounded-md"
                           />

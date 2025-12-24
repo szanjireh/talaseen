@@ -26,6 +26,15 @@ export const api = {
     create: () => `${API_URL}/products`,
     update: (id: string) => `${API_URL}/products/${id}`,
     delete: (id: string) => `${API_URL}/products/${id}`,
+    like: (id: string) => `${API_URL}/products/${id}/like`,
+    unlike: (id: string) => `${API_URL}/products/${id}/like`,
+    getLikes: (id: string) => `${API_URL}/products/${id}/likes`,
+  },
+
+  // Upload endpoints
+  upload: {
+    image: () => `${API_URL}/upload/image`,
+    images: () => `${API_URL}/upload/images`,
   },
 
   // Announcements endpoints

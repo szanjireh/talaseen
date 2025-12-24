@@ -8,21 +8,25 @@ import { useEffect } from 'react';
 import api from '@/lib/api';
 
 export default function LoginPage() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    // Don't redirect while still loading
+    if (isLoading) return;
+    
+    if (isAuthenticated && user) {
+      console.log('[LOGIN PAGE] Already authenticated, redirecting...');
       // Redirect based on role
-      if (user?.role === 'ADMIN') {
-        router.push('/admin');
-      } else if (user?.role === 'SELLER') {
-        router.push('/dashboard');
+      if (user.role === 'ADMIN') {
+        router.replace('/admin');
+      } else if (user.role === 'SELLER') {
+        router.replace('/dashboard');
       } else {
-        router.push('/');
+        router.replace('/');
       }
     }
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, user, isLoading, router]);
 
   const handleGoogleLogin = () => {
     window.location.href = api.auth.googleLogin();
@@ -30,6 +34,15 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center">
+      {/* Logo at top */}
+      <div className="absolute top-0 left-0 right-0 p-6">
+        <div className="container mx-auto">
+          <a href="/" className="inline-block text-3xl font-bold text-orange-600 hover:text-orange-700 transition-colors">
+            طلاسین
+          </a>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           {/* Left: Illustration / branding */}
@@ -49,7 +62,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md bg-white dark:bg-[#0b1220] rounded-2xl shadow-xl p-8">
               <div className="text-center mb-6">
                 <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white font-vazirmatn">
-                  خوش آمدید به تلاسین
+                  خوش آمدید به طلاسین
                 </h2>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                   وارد حساب کاربری خود شوید یا با گوگل ادامه دهید

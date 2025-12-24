@@ -3,6 +3,7 @@
 import { Header } from '@/components/header';
 import { AnnouncementBar } from '@/components/announcement-bar';
 import { Card } from '@/components/ui/card';
+import { getImageUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -118,7 +119,7 @@ export default function ProductDetailPage() {
           <div className="space-y-4">
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <img
-                src={selectedImage || 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&h=800&fit=crop'}
+                src={getImageUrl(selectedImage)}
                 alt={product.title}
                 className="w-full h-full object-cover"
               />
@@ -138,7 +139,7 @@ export default function ProductDetailPage() {
                     }`}
                   >
                     <img
-                      src={image.url}
+                      src={getImageUrl(image.url)}
                       alt={product.title}
                       className="w-full h-full object-cover"
                     />

@@ -18,8 +18,10 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(@Query() query: any) {
-    return this.productsService.findAll(query);
+  findAll(@Query() query: any, @Req() req) {
+    // Pass userId if authenticated
+    const userId = req.user?.id;
+    return this.productsService.findAll({ ...query, userId });
   }
 
   @Get(':id')
@@ -73,5 +75,22 @@ export class ProductsController {
       throw new ForbiddenException('Seller profile not found');
     }
     return this.productsService.findBySeller(seller.id);
+  }
+
+  @Post(':id/like')
+  @UseGuards(AuthGuard('jwt'))
+  async likeProduct(@Param('id') productId: string, @Req() req) {
+    return this.productsService.likeProduct(productId, req.user.id);
+  }
+
+  @Delete(':id/like')
+  @UseGuards(AuthGuard('jwt'))
+  async unlikeProduct(@Param('id') productId: string, @Req() req) {
+    return this.productsService.unlikeProduct(productId, req.user.id);
+  }
+
+  @Get(':id/likes')
+  async getProductLikes(@Param('id') productId: string) {
+    return this.productsService.getProductLikes(productId);
   }
 }

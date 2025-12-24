@@ -6,6 +6,7 @@ import { AnnouncementBar } from '@/components/announcement-bar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BecomeSellerDialog } from '@/components/become-seller-dialog';
+import { LikeButton } from '@/components/like-button';
 import { useAuth } from '@/lib/auth-context';
 import { Sparkles, Shield, Truck, Award, Store } from 'lucide-react';
 
@@ -141,7 +142,12 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
                 <a href={`/products/${product.id}`} key={product.id}>
-                  <Card className="group cursor-pointer overflow-hidden border-gray-200 hover:shadow-lg transition-all">
+                  <Card className="group cursor-pointer overflow-hidden border-gray-200 hover:shadow-lg transition-all relative">
+                    {/* Like Button */}
+                    <div className="absolute top-2 right-2 z-10">
+                      <LikeButton productId={product.id} size="sm" />
+                    </div>
+                    
                     <div className="aspect-square overflow-hidden bg-gray-100">
                       <img
                         src={product.image}

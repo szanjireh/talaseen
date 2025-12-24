@@ -9,6 +9,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
+import { getImageUrl } from '@/lib/utils';
 
 interface Product {
   id: string;
@@ -123,7 +124,7 @@ function SearchPageContent() {
                     <Card className="group cursor-pointer overflow-hidden border-gray-200 hover:shadow-lg transition-all">
                       <div className="aspect-square overflow-hidden bg-gray-100">
                         <img
-                          src={product.images?.[0]?.url || 'https://placehold.co/400x400?text=No+Image'}
+                          src={product.images?.[0]?.url ? getImageUrl(product.images[0].url) : 'https://placehold.co/400x400?text=No+Image'}
                           alt={product.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />

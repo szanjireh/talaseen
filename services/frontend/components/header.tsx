@@ -15,9 +15,11 @@ export function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
+    console.log('[HEADER] Logging out...');
     logout();
     setShowUserMenu(false);
-    router.push('/');
+    // Use replace to avoid going back to authenticated pages
+    router.replace('/login');
   };
 
   const handleSearch = (e: React.FormEvent) => {

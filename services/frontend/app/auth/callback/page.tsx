@@ -10,24 +10,43 @@ function AuthCallbackContent() {
   const { login } = useAuth();
 
   useEffect(() => {
+    console.log('[AUTH CALLBACK] Starting callback processing...');
     const token = searchParams.get('token');
     const userParam = searchParams.get('user');
+    
+    console.log('[AUTH CALLBACK] Token exists:', !!token);
+    console.log('[AUTH CALLBACK] User param exists:', !!userParam);
 
     if (token && userParam) {
       try {
+        console.log('[AUTH CALLBACK] Parsing user data...');
         const user = JSON.parse(decodeURIComponent(userParam));
-        login(token, user);
+        console.log('[AUTH CALLBACK] User parsed successfully:', user.email);
         
-        // Always redirect to the first page after login
-        router.push('/');
+        console.log('[AUTH CALLBACK] Calling login...');
+        login(token, user);
+        console.log('[AUTH CALLBACK] Login completed');
+        
+        // Redirect based on role
+        console.log('[AUTH CALLBACK] Redirecting based on role:', user.role);
+        setTimeout(() => {
+          if (user.role === 'ADMIN') {
+            window.location.href = '/admin';
+          } else if (user.role === 'SELLER') {
+            window.location.href = '/dashboard';
+          } else {
+            window.location.href = '/';
+          }
+        }, 100);
       } catch (error) {
-        console.error('Auth callback error:', error);
-        router.push('/login');
+        console.error('[AUTH CALLBACK] Error:', error);
+        window.location.href = '/login';
       }
     } else {
-      router.push('/login');
+      console.log('[AUTH CALLBACK] Missing token or user, redirecting to login');
+      window.location.href = '/login';
     }
-  }, [searchParams, login, router]);
+  }, [searchParams, login]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">

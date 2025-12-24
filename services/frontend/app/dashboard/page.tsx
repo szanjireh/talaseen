@@ -3,6 +3,7 @@
 import { ProtectedRoute } from '@/components/protected-route';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
+import { getImageUrl } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AddProductForm } from '@/components/add-product-form';
 import { EditProductForm } from '@/components/edit-product-form';
@@ -92,17 +93,24 @@ function DashboardContent() {
   };
 
   const handleLogout = () => {
+    console.log('[DASHBOARD] Logging out...');
     logout();
-    router.push('/login');
+    router.replace('/login');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-yellow-600 bg-clip-text text-transparent">
-            پنل فروشنده
-          </h1>
+          <div className="flex items-center gap-4">
+            <a href="/" className="text-2xl font-bold text-orange-600 hover:text-orange-700 transition-colors">
+              طلاسین
+            </a>
+            <span className="text-gray-400">|</span>
+            <h1 className="text-xl font-semibold text-gray-700">
+              پنل فروشنده
+            </h1>
+          </div>
           <Button onClick={handleLogout} variant="outline">
             خروج
           </Button>
@@ -236,7 +244,7 @@ function DashboardContent() {
                     >
                       <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                         <img
-                          src={product.images.find((img) => img.isPrimary)?.url || product.images[0]?.url || 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=200&h=200&fit=crop'}
+                          src={getImageUrl(product.images.find((img) => img.isPrimary)?.url || product.images[0]?.url || '')}
                           alt={product.title}
                           className="w-full h-full object-cover"
                         />
