@@ -18,14 +18,8 @@ function AuthCallbackContent() {
         const user = JSON.parse(decodeURIComponent(userParam));
         login(token, user);
         
-        // Redirect based on role
-        if (user.role === 'ADMIN') {
-          router.push('/admin');
-        } else if (user.role === 'SELLER') {
-          router.push('/dashboard');
-        } else {
-          router.push('/');
-        }
+        // Always redirect to the first page after login
+        router.push('/');
       } catch (error) {
         console.error('Auth callback error:', error);
         router.push('/login');

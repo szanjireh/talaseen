@@ -221,22 +221,24 @@ function AdminContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+    <div dir="rtl" className="min-h-screen bg-gradient-to-b from-orange-50 to-white dark:from-slate-950 dark:to-slate-900 font-vazirmatn">
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-600 bg-clip-text text-transparent">
-            Admin Panel
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+            پنل مدیریت
           </h1>
-          <Button onClick={handleLogout} variant="outline">
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={handleLogout} variant="outline">
+              خروج
+            </Button>
+          </div>
         </div>
       </nav>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold mb-2">Welcome, {user?.name}</h2>
-          <p className="text-muted-foreground">Admin Dashboard</p>
+        <div className="mb-6 text-right">
+          <h2 className="text-3xl font-bold mb-2">سلام، {user?.name}</h2>
+          <p className="text-muted-foreground">داشبورد مدیریت</p>
         </div>
 
         {/* Tabs */}
@@ -246,21 +248,21 @@ function AdminContent() {
             onClick={() => setActiveTab('sellers')}
             className="rounded-b-none"
           >
-            Seller Requests
+            درخواست‌های فروشنده
           </Button>
           <Button
             variant={activeTab === 'announcements' ? 'default' : 'ghost'}
             onClick={() => setActiveTab('announcements')}
             className="rounded-b-none"
           >
-            Announcements
+            اطلاعیه‌ها
           </Button>
           <Button
             variant={activeTab === 'products' ? 'default' : 'ghost'}
             onClick={() => setActiveTab('products')}
             className="rounded-b-none"
           >
-            All Products
+            محصولات
           </Button>
         </div>
 
@@ -271,13 +273,13 @@ function AdminContent() {
                 variant={filter === 'PENDING' ? 'default' : 'outline'}
                 onClick={() => setFilter('PENDING')}
               >
-                Pending Requests
+                در انتظار
               </Button>
               <Button
                 variant={filter === 'ALL' ? 'default' : 'outline'}
                 onClick={() => setFilter('ALL')}
               >
-                All Requests
+                همه
               </Button>
             </div>
 
@@ -298,9 +300,9 @@ function AdminContent() {
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div>
-                          <CardTitle>{seller.shopName}</CardTitle>
-                          <CardDescription>
-                            Requested by: {seller.user?.name} ({seller.user?.email})
+                          <CardTitle className="text-right">{seller.shopName}</CardTitle>
+                          <CardDescription className="text-right">
+                            درخواست‌دهنده: {seller.user?.name} ({seller.user?.email})
                           </CardDescription>
                         </div>
                         <span
@@ -310,13 +312,13 @@ function AdminContent() {
                               : 'bg-yellow-100 text-yellow-800'
                           }`}
                         >
-                          {seller.isApproved ? 'APPROVED' : 'PENDING'}
+                          {seller.isApproved ? 'تایید شده' : 'در انتظار'}
                         </span>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="text-xs text-muted-foreground">
-                        Requested on: {new Date(seller.createdAt).toLocaleDateString()}
+                        درخواست در: {new Date(seller.createdAt).toLocaleDateString('fa-IR')}
                       </div>
                       {!seller.isApproved && (
                         <div className="flex gap-2">
@@ -324,13 +326,13 @@ function AdminContent() {
                             onClick={() => handleApprove(seller.id)}
                             className="bg-green-600 hover:bg-green-700"
                           >
-                            Approve
+                            تایید
                           </Button>
                           <Button
                             onClick={() => handleReject(seller.id)}
                             variant="destructive"
                           >
-                            Reject
+                            رد کردن
                           </Button>
                         </div>
                       )}
@@ -342,9 +344,9 @@ function AdminContent() {
           </>
         ) : activeTab === 'announcements' ? (
           <>
-            <div className="mb-6">
+            <div className="mb-6 text-right">
               <Button onClick={() => setShowAnnouncementForm(!showAnnouncementForm)}>
-                {showAnnouncementForm ? 'Cancel' : '+ New Announcement'}
+                {showAnnouncementForm ? 'انصراف' : '+ اطلاعیه جدید'}
               </Button>
             </div>
 
@@ -356,7 +358,7 @@ function AdminContent() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium">Title</label>
+                    <label className="text-sm font-medium">عنوان</label>
                     <Input
                       value={announcementTitle}
                       onChange={(e) => setAnnouncementTitle(e.target.value)}
@@ -365,7 +367,7 @@ function AdminContent() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Priority (higher = shows first)</label>
+                    <label className="text-sm font-medium">اولویت (عدد بزرگتر بالاتر نمایش داده می‌شود)</label>
                     <Input
                       type="number"
                       value={announcementPriority}
@@ -374,7 +376,7 @@ function AdminContent() {
                       className="mt-1"
                     />
                   </div>
-                  <Button onClick={handleCreateAnnouncement}>Create Announcement</Button>
+                  <Button onClick={handleCreateAnnouncement}>ایجاد اطلاعیه</Button>
                 </CardContent>
               </Card>
             )}
@@ -396,10 +398,10 @@ function AdminContent() {
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <CardTitle className="text-lg">{announcement.title}</CardTitle>
-                          <CardDescription>
-                            Priority: {announcement.priority} • Created:{' '}
-                            {new Date(announcement.createdAt).toLocaleDateString()}
+                          <CardTitle className="text-lg text-right">{announcement.title}</CardTitle>
+                          <CardDescription className="text-right">
+                            اولویت: {announcement.priority} • ایجاد شده در:{' '}
+                            {new Date(announcement.createdAt).toLocaleDateString('fa-IR')}
                           </CardDescription>
                         </div>
                         <span
@@ -409,7 +411,7 @@ function AdminContent() {
                               : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {announcement.isActive ? 'ACTIVE' : 'INACTIVE'}
+                          {announcement.isActive ? 'فعال' : 'غیرفعال'}
                         </span>
                       </div>
                     </CardHeader>
@@ -419,14 +421,14 @@ function AdminContent() {
                         variant="outline"
                         size="sm"
                       >
-                        {announcement.isActive ? 'Deactivate' : 'Activate'}
+                        {announcement.isActive ? 'غیرفعال کن' : 'فعال کن'}
                       </Button>
                       <Button
                         onClick={() => handleDeleteAnnouncement(announcement.id)}
                         variant="destructive"
                         size="sm"
                       >
-                        Delete
+                        حذف
                       </Button>
                     </CardContent>
                   </Card>
@@ -437,9 +439,9 @@ function AdminContent() {
         ) : (
           <>
             {/* Products Tab */}
-            <div className="mb-4">
-              <h3 className="text-xl font-semibold">All Products ({products.length})</h3>
-              <p className="text-sm text-muted-foreground">View and manage all products from all sellers</p>
+            <div className="mb-4 text-right">
+              <h3 className="text-xl font-semibold">محصولات ({products.length})</h3>
+              <p className="text-sm text-muted-foreground">نمایش و مدیریت همه محصولات</p>
             </div>
 
             {loading ? (
@@ -469,18 +471,18 @@ function AdminContent() {
 
                         {/* Product Details */}
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-lg mb-1 truncate">{product.title}</h4>
-                          <p className="text-sm text-muted-foreground mb-2 line-clamp-1">
+                          <h4 className="font-semibold text-lg mb-1 truncate text-right">{product.title}</h4>
+                          <p className="text-sm text-muted-foreground mb-2 line-clamp-1 text-right">
                             {product.description}
                           </p>
                           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                             <div>
-                              <span className="text-muted-foreground">Seller:</span>{' '}
+                              <span className="text-muted-foreground">فروشنده:</span>{' '}
                               <span className="font-medium">{product.seller?.shopName || 'N/A'}</span>
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Price:</span>{' '}
-                              <span className="font-medium">${product.finalPrice.toLocaleString()}</span>
+                              <span className="text-muted-foreground">قیمت:</span>{' '}
+                              <span className="font-medium">{product.finalPrice.toLocaleString('fa-IR')} تومان</span>
                             </div>
                             <div>
                               <span className="text-muted-foreground">Weight:</span> {product.weight}g
@@ -496,7 +498,7 @@ function AdminContent() {
                             </div>
                           </div>
                           <div className="text-xs text-muted-foreground mt-2">
-                            Created: {new Date(product.createdAt).toLocaleDateString()}
+                            ایجاد شده: {new Date(product.createdAt).toLocaleDateString('fa-IR')}
                           </div>
                         </div>
 
@@ -507,14 +509,14 @@ function AdminContent() {
                             variant="outline"
                             size="sm"
                           >
-                            View
+                            مشاهده
                           </Button>
                           <Button
                             onClick={() => handleDeleteProduct(product.id)}
                             variant="destructive"
                             size="sm"
                           >
-                            Delete
+                            حذف
                           </Button>
                         </div>
                       </div>

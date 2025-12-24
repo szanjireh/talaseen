@@ -76,27 +76,44 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-orange-50 to-white py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              طلا یاب
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-              هزاران طلای بازار را در بازار مجازی طلا ببینید
-            </p>
-            
-            {/* Become Seller Button - Only show for authenticated USER role */}
-            {isAuthenticated && isUser && (
-              <div className="flex justify-center">
-                <Button
-                  onClick={() => setShowSellerDialog(true)}
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
-                >
-                  <Store className="w-5 h-5 ml-2" />
-                  درخواست فروشندگی
-                </Button>
+        <section className="bg-gradient-to-b from-orange-50 to-white py-20">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div className="text-right">
+                <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 mb-4 font-vazirmatn leading-tight">
+                  طلا یاب
+                </h1>
+                <p className="text-lg md:text-xl text-gray-600 max-w-2xl mb-8">
+                  هزاران طلای بازار را یک‌جا ببینید — مقایسه کنید و بهترین قیمت را پیدا کنید.
+                </p>
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-4">
+                  <a href="/products" className="inline-flex items-center justify-center bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-full text-lg font-medium shadow-lg transition-transform transform hover:-translate-y-0.5">
+                    شروع خرید
+                  </a>
+
+                  {isAuthenticated && isUser && (
+                    <Button
+                      onClick={() => setShowSellerDialog(true)}
+                      className="bg-white border border-orange-600 text-orange-600 px-6 py-3 rounded-full text-lg font-medium shadow-sm hover:shadow-md"
+                    >
+                      درخواست فروشندگی
+                    </Button>
+                  )}
+                </div>
+
+                <div className="mt-8 text-sm text-gray-500">
+                  <span className="font-medium">محبوب‌ترین دسته‌ها:</span>
+                  <span className="ml-2">انگشتر · گردنبند · گوشواره · دستبند</span>
+                </div>
               </div>
-            )}
+
+              <div className="flex justify-center">
+                <div className="w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+                  <img src="/images/hero-gold.jpg" alt="طلای ویژه" className="w-full h-64 object-cover" onError={(e)=>{(e.currentTarget as HTMLImageElement).src='https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1200&h=800&fit=crop'}} />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

@@ -8,6 +8,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        vazirmatn: ['Vazirmatn', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial'],
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
