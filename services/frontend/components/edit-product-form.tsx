@@ -33,6 +33,20 @@ const PRODUCT_TYPES = [
   'OTHER',
 ];
 
+const PRODUCT_TYPE_LABELS: Record<string, string> = {
+  RING: 'انگشتر',
+  BRACELET: 'دستبند',
+  NECKLACE: 'گردنبند',
+  EARRING: 'گوشواره',
+  BANGLE: 'النگو',
+  PENDANT: 'آویز',
+  ANKLET: 'پابند',
+  CHAIN: 'زنجیر',
+  COIN: 'سکه',
+  BAR: 'شمش',
+  OTHER: 'سایر',
+};
+
 interface EditProductFormProps {
   product: any;
   onSuccess: () => void;
@@ -162,7 +176,7 @@ export function EditProductForm({ product, onSuccess, onCancel }: EditProductFor
               >
                 {PRODUCT_TYPES.map((type) => (
                   <option key={type} value={type}>
-                    {type}
+                    {PRODUCT_TYPE_LABELS[type]}
                   </option>
                 ))}
               </select>

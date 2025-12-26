@@ -105,25 +105,24 @@ export function LikeButton({
       onClick={handleLike}
       disabled={isLoading}
       className={`
-        ${sizeClasses[size]}
-        inline-flex items-center justify-center gap-1
-        rounded-full border-2 
+        inline-flex items-center justify-center gap-1.5 px-3 py-1.5
+        rounded-lg
         ${isLiked 
-          ? 'bg-red-500 border-red-500 text-white' 
-          : 'bg-white border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500'
+          ? 'bg-red-50 border-2 border-red-500 text-red-600' 
+          : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-500 hover:bg-red-50'
         }
         transition-all duration-200
-        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-        shadow-sm hover:shadow-md
+        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}
       `}
       title={isLiked ? 'برداشتن لایک' : 'لایک کردن'}
     >
       <Heart
-        className={`${iconSizes[size]} ${isLiked ? 'fill-current' : ''}`}
+        className={`w-4 h-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
       />
-      {likesCount > 0 && (
-        <span className="font-medium">{likesCount.toLocaleString('fa-IR')}</span>
-      )}
+      <span className="font-semibold text-sm">
+        {likesCount > 0 ? likesCount.toLocaleString('fa-IR') : '۰'}
+      </span>
+      <span className="text-xs text-gray-500">لایک</span>
     </button>
   );
 }

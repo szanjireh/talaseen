@@ -17,8 +17,12 @@ export class ProductsService {
       maxMakingFee,
     } = filters || {};
     
+    // Parse numeric values
+    const parsedPage = parseInt(page as string) || 1;
+    const parsedLimit = parseInt(limit as string) || 24;
+    
     if (!query || query.trim() === '') {
-      return this.findAll({ page, limit, minPrice, maxPrice, minWeight, maxWeight, maxProfitPercent, maxMakingFee });
+      return this.findAll({ page: parsedPage, limit: parsedLimit, minPrice, maxPrice, minWeight, maxWeight, maxProfitPercent, maxMakingFee });
     }
 
     const searchTerm = query.trim();
@@ -53,29 +57,44 @@ export class ProductsService {
             include: {
               user: { select: { id: true, name: true, email: true, avatar: true } }
             }
-          } 
+          },
+          likes: filters?.userId ? {
+            where: { userId: filters.userId },
+            select: { id: true }
+          } : false
         },
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (parsedPage - 1) * parsedLimit,
+        take: parsedLimit,
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.goldProduct.count({ where }),
     ]);
 
+    // Transform products to include isLiked
+    const transformedProducts = products.map(product => ({
+      ...product,
+      isLiked: filters?.userId ? (product.likes && product.likes.length > 0) : false,
+      likes: undefined,
+    }));
+
     return {
-      products,
+      products: transformedProducts,
       query: searchTerm,
       pagination: {
-        page,
-        limit,
+        page: parsedPage,
+        limit: parsedLimit,
         total,
-        pages: Math.ceil(total / limit),
+        pages: Math.ceil(total / parsedLimit),
       },
     };
   }
 
   async findAll(filters?: any) {
     const { type, minPrice, maxPrice, search, page = 1, limit = 24, userId } = filters || {};
+    
+    // Parse numeric values
+    const parsedPage = parseInt(page as string) || 1;
+    const parsedLimit = parseInt(limit as string) || 24;
     
     const where: any = {};
     
@@ -99,43 +118,38 @@ export class ProductsService {
               user: { select: { id: true, name: true, email: true, avatar: true } }
             }
           },
-          _count: {
-            select: { likes: true }
-          },
           likes: userId ? {
             where: { userId },
             select: { id: true }
           } : false
         },
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (parsedPage - 1) * parsedLimit,
+        take: parsedLimit,
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.goldProduct.count({ where }),
     ]);
 
-    // Transform products to include likesCount and isLiked
+    // Transform products to include isLiked
     const transformedProducts = products.map(product => ({
       ...product,
-      likesCount: product._count.likes,
       isLiked: userId ? (product.likes && product.likes.length > 0) : false,
-      _count: undefined,
       likes: undefined,
     }));
 
     return {
       products: transformedProducts,
       pagination: {
-        page,
-        limit,
+        page: parsedPage,
+        limit: parsedLimit,
         total,
-        pages: Math.ceil(total / limit),
+        pages: Math.ceil(total / parsedLimit),
       },
     };
   }
 
-  async findOne(id: string) {
-    return this.prisma.goldProduct.findUnique({
+  async findOne(id: string, userId?: string) {
+    const product = await this.prisma.goldProduct.findUnique({
       where: { id },
       include: { 
         images: { orderBy: { isPrimary: 'desc' } },
@@ -143,9 +157,21 @@ export class ProductsService {
           include: {
             user: { select: { id: true, name: true, email: true, avatar: true } }
           }
-        } 
+        },
+        likes: userId ? {
+          where: { userId },
+          select: { id: true }
+        } : false
       },
     });
+
+    if (!product) return null;
+
+    return {
+      ...product,
+      isLiked: userId ? (product.likes && product.likes.length > 0) : false,
+      likes: undefined,
+    };
   }
 
   async create(data: any, userId: string) {
@@ -155,11 +181,11 @@ export class ProductsService {
     });
 
     if (!seller) {
-      throw new Error('Seller profile not found');
+      throw new Error('پروفایل فروشنده شما پیدا نشد. لطفاً ابتدا درخواست فروشندگی دهید.');
     }
 
     if (!seller.isApproved) {
-      throw new Error('Seller must be approved before creating products');
+      throw new Error('پروفایل فروشنده شما هنوز تایید نشده است. لطفاً منتظر تایید مدیر بمانید.');
     }
 
     // Extract images array and prepare nested create
@@ -215,51 +241,81 @@ export class ProductsService {
     });
 
     if (existingLike) {
-      return { message: 'Product already liked', likesCount: await this.getLikesCount(productId) };
+      const product = await this.prisma.goldProduct.findUnique({
+        where: { id: productId },
+        select: { likesCount: true },
+      });
+      return { message: 'Product already liked', likesCount: product?.likesCount || 0 };
     }
 
-    // Create like
-    await this.prisma.like.create({
-      data: {
-        userId,
-        productId,
-      },
+    // Create like and increment counter in a transaction
+    const result = await this.prisma.$transaction(async (tx) => {
+      await tx.like.create({
+        data: {
+          userId,
+          productId,
+        },
+      });
+
+      const updatedProduct = await tx.goldProduct.update({
+        where: { id: productId },
+        data: {
+          likesCount: { increment: 1 },
+        },
+        select: { likesCount: true },
+      });
+
+      return updatedProduct.likesCount;
     });
 
     return {
       message: 'Product liked successfully',
-      likesCount: await this.getLikesCount(productId),
+      likesCount: result,
     };
   }
 
   async unlikeProduct(productId: string, userId: string) {
     try {
-      await this.prisma.like.delete({
-        where: {
-          userId_productId: {
-            userId,
-            productId,
+      // Delete like and decrement counter in a transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        await tx.like.delete({
+          where: {
+            userId_productId: {
+              userId,
+              productId,
+            },
           },
-        },
+        });
+
+        const updatedProduct = await tx.goldProduct.update({
+          where: { id: productId },
+          data: {
+            likesCount: { decrement: 1 },
+          },
+          select: { likesCount: true },
+        });
+
+        return updatedProduct.likesCount;
       });
 
       return {
         message: 'Product unliked successfully',
-        likesCount: await this.getLikesCount(productId),
+        likesCount: result,
       };
     } catch (error) {
-      return { message: 'Like not found', likesCount: await this.getLikesCount(productId) };
+      const product = await this.prisma.goldProduct.findUnique({
+        where: { id: productId },
+        select: { likesCount: true },
+      });
+      return { message: 'Like not found', likesCount: product?.likesCount || 0 };
     }
   }
 
   async getProductLikes(productId: string) {
-    const likesCount = await this.getLikesCount(productId);
-    return { productId, likesCount };
-  }
-
-  private async getLikesCount(productId: string): Promise<number> {
-    return this.prisma.like.count({
-      where: { productId },
+    const product = await this.prisma.goldProduct.findUnique({
+      where: { id: productId },
+      select: { likesCount: true },
     });
+    return { productId, likesCount: product?.likesCount || 0 };
   }
 }

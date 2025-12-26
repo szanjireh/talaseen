@@ -26,20 +26,55 @@ interface Product {
 }
 
 function DashboardContent() {
-  const { user, logout, token } = useAuth();
+  const { user, logout, token, login } = useAuth();
   const router = useRouter();
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sellerStatus, setSellerStatus] = useState<{ isApproved: boolean; shopName: string } | null>(null);
+
+  // Fetch seller status on mount
+  useEffect(() => {
+    const fetchSellerStatus = async () => {
+      try {
+        const response = await fetch(api.auth.getMySeller(), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const seller = await response.json();
+          setSellerStatus({
+            isApproved: seller?.isApproved || false,
+            shopName: seller?.shopName || user?.shopName || '',
+          });
+          
+          // Update user in auth context if needed
+          if (seller && user) {
+            login(token!, {
+              ...user,
+              shopName: seller.shopName,
+              isApproved: seller.isApproved,
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch seller status:', error);
+      }
+    };
+
+    if (token) {
+      fetchSellerStatus();
+    }
+  }, [token]);
 
   useEffect(() => {
-    if (user?.isApproved) {
+    const isApproved = sellerStatus?.isApproved ?? user?.isApproved;
+    if (isApproved) {
       fetchProducts();
     } else {
       setLoading(false);
     }
-  }, [user]);
+  }, [sellerStatus, user]);
 
   const fetchProducts = async () => {
     try {
@@ -121,12 +156,12 @@ function DashboardContent() {
         <div className="mb-6">
           <h2 className="text-3xl font-bold mb-2">خوش آمدید، {user?.name}!</h2>
           <p className="text-muted-foreground">
-            مدیریت فروشگاه: <span className="font-semibold">{user?.shopName}</span>
+            مدیریت فروشگاه: <span className="font-semibold">{sellerStatus?.shopName || user?.shopName}</span>
           </p>
         </div>
 
         {/* Approval Status Warning */}
-        {!user?.isApproved && (
+        {!(sellerStatus?.isApproved ?? user?.isApproved) && (
           <Card className="mb-6 border-yellow-300 bg-yellow-50">
             <CardContent className="py-4">
               <p className="text-yellow-800 font-semibold">
@@ -169,15 +204,15 @@ function DashboardContent() {
               <CardDescription>تایید حساب</CardDescription>
             </CardHeader>
             <CardContent>
-              <span className={`text-lg font-semibold ${user?.isApproved ? 'text-green-600' : 'text-yellow-600'}`}>
-                {user?.isApproved ? '✅ تایید شده' : '⏳ در انتظار'}
+              <span className={`text-lg font-semibold ${(sellerStatus?.isApproved ?? user?.isApproved) ? 'text-green-600' : 'text-yellow-600'}`}>
+                {(sellerStatus?.isApproved ?? user?.isApproved) ? '✅ تایید شده' : '⏳ در انتظار'}
               </span>
             </CardContent>
           </Card>
         </div>
 
         {/* Add Product Button */}
-        {user?.isApproved && !showAddForm && (
+        {(sellerStatus?.isApproved ?? user?.isApproved) && !showAddForm && (
           <div className="mb-6">
             <Button
               onClick={() => setShowAddForm(true)}
@@ -261,7 +296,7 @@ function DashboardContent() {
                           </span>
                         </div>
                         <div className="flex gap-3 text-xs text-gray-500 mt-1">
-                          <span>هزینه ساخت: ${product.makingFee}</span>
+                          <span>درصد اجرت: {product.makingFee}%</span>
                           <span>•</span>
                           <span>سود: {product.profitPercent}%</span>
                         </div>

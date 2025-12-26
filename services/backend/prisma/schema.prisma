@@ -54,6 +54,7 @@ model GoldProduct {
   profitPercent       Float
   goldPriceAtCreation Float
   finalPrice          Float
+  likesCount          Int              @default(0)
   images              ProductImage[]
   likes               Like[]
   createdAt           DateTime         @default(now())
@@ -62,6 +63,7 @@ model GoldProduct {
   @@index([sellerId])
   @@index([type])
   @@index([createdAt])
+  @@index([likesCount])
 }
 
 model ProductImage {

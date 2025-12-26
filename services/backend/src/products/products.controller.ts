@@ -13,8 +13,9 @@ export class ProductsController {
   ) {}
 
   @Get('search')
-  search(@Query('q') query: string, @Query() filters: any) {
-    return this.productsService.search(query, filters);
+  search(@Query('q') query: string, @Query() filters: any, @Req() req) {
+    const userId = req.user?.id;
+    return this.productsService.search(query, { ...filters, userId });
   }
 
   @Get()
@@ -25,15 +26,20 @@ export class ProductsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req) {
+    const userId = req.user?.id;
+    return this.productsService.findOne(id, userId);
   }
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('SELLER', 'ADMIN')
-  create(@Body() createProductDto: any, @Req() req) {
-    return this.productsService.create(createProductDto, req.user.id);
+  async create(@Body() createProductDto: any, @Req() req) {
+    try {
+      return await this.productsService.create(createProductDto, req.user.id);
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
   }
 
   @Put(':id')

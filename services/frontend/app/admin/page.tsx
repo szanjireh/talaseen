@@ -499,7 +499,7 @@ function AdminContent() {
                               <span className="text-muted-foreground">Type:</span> {product.type}
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Making Fee:</span> ${product.makingFee}
+                              <span className="text-muted-foreground">درصد اجرت:</span> {product.makingFee}%
                             </div>
                             <div>
                               <span className="text-muted-foreground">Profit:</span> {product.profitPercent}%

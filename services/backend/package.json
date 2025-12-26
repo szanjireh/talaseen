@@ -12,7 +12,10 @@
     "studio": "npx prisma studio",
     "seed": "npx ts-node prisma/seed.ts",
     "create-admin": "npx ts-node scripts/create-admin.ts",
-    "promote-admin": "npx ts-node scripts/promote-to-admin.ts"
+    "promote-admin": "npx ts-node scripts/promote-to-admin.ts",
+    "promote-seller": "npx ts-node scripts/promote-seller.ts",
+    "sync-likes": "npx ts-node scripts/sync-likes-count.ts",
+    "setup-admin": "npx ts-node scripts/setup-admin.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",

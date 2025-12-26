@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/lib/auth-context';
-import { Search, LogOut, User, Settings } from 'lucide-react';
+import { Search, LogOut, User, Settings, Heart, ShoppingBag, LayoutDashboard, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -65,36 +65,52 @@ export function Header() {
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                {user?.role === 'SELLER' || user?.role === 'ADMIN' ? (
+                {user?.role === 'ADMIN' && (
                   <Button
                     variant="outline"
-                    onClick={() => router.push(user.role === 'ADMIN' ? '/admin' : '/dashboard')}
+                    onClick={() => router.push('/admin')}
+                    className="border-purple-300 hover:border-purple-600 hover:text-purple-600 text-purple-600"
+                  >
+                    پنل مدیر
+                  </Button>
+                )}
+                
+                {(user?.role === 'SELLER' || (user?.role === 'ADMIN' && user?.shopName)) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push('/dashboard')}
                     className="border-gray-300 hover:border-orange-600 hover:text-orange-600"
                   >
-                    {user.role === 'ADMIN' ? 'پنل مدیر' : 'پنل فروشنده'}
+                    پنل فروشنده
                   </Button>
-                ) : null}
+                )}
                 
                 {/* User Menu */}
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-gray-50 transition-all border-2 border-transparent hover:border-orange-200"
                   >
                     {user?.avatar ? (
                       <img 
                         src={user.avatar} 
                         alt={user.name || 'User'} 
-                        className="w-8 h-8 rounded-full"
+                        className="w-10 h-10 rounded-full ring-2 ring-orange-200 object-cover"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-                        <User className="w-5 h-5 text-orange-600" />
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center ring-2 ring-orange-200 shadow-sm">
+                        <User className="w-5 h-5 text-white" />
                       </div>
                     )}
-                    <span className="hidden sm:inline text-sm text-gray-700 font-medium">
-                      {user?.name?.split(' ')[0] || 'کاربر'}
-                    </span>
+                    <div className="hidden sm:flex flex-col items-start">
+                      <span className="text-sm text-gray-900 font-semibold leading-tight">
+                        {user?.name?.split(' ')[0] || 'کاربر'}
+                      </span>
+                      <span className="text-xs text-gray-500 leading-tight">
+                        {user?.role === 'ADMIN' ? 'مدیر' : user?.role === 'SELLER' ? 'فروشنده' : 'کاربر'}
+                      </span>
+                    </div>
+                    <ChevronDown className="hidden sm:block w-4 h-4 text-gray-400" />
                   </button>
 
                   {/* Dropdown Menu */}
@@ -104,26 +120,136 @@ export function Header() {
                         className="fixed inset-0 z-10" 
                         onClick={() => setShowUserMenu(false)}
                       />
-                      <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-sm font-medium text-gray-900 text-right">
-                            {user?.name || 'کاربر'}
-                          </p>
-                          <p className="text-xs text-gray-500 text-right mt-1">
-                            {user?.email}
-                          </p>
-                          <p className="text-xs text-orange-600 font-medium mt-1 text-right">
-                            {user?.role === 'ADMIN' ? 'مدیر' : user?.role === 'SELLER' ? 'فروشنده' : 'کاربر'}
-                          </p>
+                      <div className="absolute left-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-20">
+                        {/* User Info Header */}
+                        <div className="px-4 py-4 bg-gradient-to-r from-orange-50 to-orange-100 border-b border-orange-200">
+                          <div className="flex items-center gap-3">
+                            {user?.avatar ? (
+                              <img 
+                                src={user.avatar} 
+                                alt={user.name || 'User'} 
+                                className="w-14 h-14 rounded-full ring-3 ring-white shadow-md object-cover"
+                              />
+                            ) : (
+                              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center ring-3 ring-white shadow-md">
+                                <User className="w-7 h-7 text-white" />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-base font-bold text-gray-900 text-right truncate">
+                                {user?.name || 'کاربر'}
+                              </p>
+                              <p className="text-xs text-gray-600 text-right truncate mt-0.5">
+                                {user?.email}
+                              </p>
+                              <div className="mt-1.5">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white shadow-sm">
+                                  {user?.role === 'ADMIN' ? '👑 مدیر' : user?.role === 'SELLER' ? '🏪 فروشنده' : '👤 کاربر'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-right"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span>خروج</span>
-                        </button>
+                        {/* Menu Items */}
+                        <div className="py-2">
+                          {user?.role === 'ADMIN' && (
+                            <button
+                              onClick={() => {
+                                router.push('/admin');
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all text-right font-medium group"
+                            >
+                              <div className="w-9 h-9 rounded-lg bg-purple-100 group-hover:bg-purple-200 flex items-center justify-center transition-colors">
+                                <Settings className="w-4 h-4 text-purple-600" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-semibold">پنل مدیریت</div>
+                                <div className="text-xs text-gray-500">مدیریت سایت و کاربران</div>
+                              </div>
+                            </button>
+                          )}
+                          
+                          {(user?.role === 'SELLER' || (user?.role === 'ADMIN' && user?.shopName)) && (
+                            <button
+                              onClick={() => {
+                                router.push('/dashboard');
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all text-right font-medium group"
+                            >
+                              <div className="w-9 h-9 rounded-lg bg-orange-100 group-hover:bg-orange-200 flex items-center justify-center transition-colors">
+                                <LayoutDashboard className="w-4 h-4 text-orange-600" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-semibold">پنل فروشنده</div>
+                                <div className="text-xs text-gray-500">مدیریت محصولات فروشگاه</div>
+                              </div>
+                            </button>
+                          )}
+                          
+                          <button
+                            onClick={() => {
+                              router.push('/favorites');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all text-right font-medium group"
+                          >
+                            <div className="w-9 h-9 rounded-lg bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
+                              <Heart className="w-4 h-4 text-red-500" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-semibold">علاقه‌مندی‌ها</div>
+                              <div className="text-xs text-gray-500">محصولات مورد علاقه شما</div>
+                            </div>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              router.push('/orders');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all text-right font-medium group"
+                          >
+                            <div className="w-9 h-9 rounded-lg bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+                              <ShoppingBag className="w-4 h-4 text-blue-500" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-semibold">سفارشات من</div>
+                              <div className="text-xs text-gray-500">پیگیری و مشاهده سفارشات</div>
+                            </div>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              router.push('/settings');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all text-right font-medium group"
+                          >
+                            <div className="w-9 h-9 rounded-lg bg-gray-100 group-hover:bg-gray-200 flex items-center justify-center transition-colors">
+                              <Settings className="w-4 h-4 text-gray-600" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-semibold">تنظیمات</div>
+                              <div className="text-xs text-gray-500">تنظیمات حساب کاربری</div>
+                            </div>
+                          </button>
+                        </div>
+
+                        {/* Logout */}
+                        <div className="border-t border-gray-100 p-2">
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-all text-right font-semibold rounded-lg group"
+                          >
+                            <div className="w-9 h-9 rounded-lg bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
+                              <LogOut className="w-4 h-4 text-red-600" />
+                            </div>
+                            <span>خروج از حساب کاربری</span>
+                          </button>
+                        </div>
                       </div>
                     </>
                   )}

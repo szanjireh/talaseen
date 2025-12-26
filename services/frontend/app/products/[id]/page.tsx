@@ -5,10 +5,11 @@ import { AnnouncementBar } from '@/components/announcement-bar';
 import { Card } from '@/components/ui/card';
 import { getImageUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { LikeButton } from '@/components/like-button';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
-import { ArrowLeft, Weight, DollarSign, TrendingUp, Package } from 'lucide-react';
+import { ArrowLeft, Weight, DollarSign, TrendingUp, Package, Percent } from 'lucide-react';
 
 interface ProductImage {
   id: string;
@@ -37,6 +38,8 @@ interface Product {
     };
   };
   createdAt: string;
+  likesCount?: number;
+  isLiked?: boolean;
 }
 
 export default function ProductDetailPage() {
@@ -202,10 +205,10 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b">
-                  <span className="font-semibold" suppressHydrationWarning>{product.makingFee.toLocaleString('fa-IR')} تومان</span>
+                  <span className="font-semibold" suppressHydrationWarning>{product.makingFee.toLocaleString('fa-IR')}%</span>
                   <div className="flex items-center gap-2 text-gray-600">
-                    <span>اجرت ساخت</span>
-                    <DollarSign className="w-4 h-4" />
+                    <span>درصد اجرت ساخت</span>
+                    <Percent className="w-4 h-4" />
                   </div>
                 </div>
 
@@ -232,13 +235,20 @@ export default function ProductDetailPage() {
               </Card>
             )}
 
+            {/* Like Button */}
+            <div className="mb-4">
+              <LikeButton 
+                productId={product.id}
+                initialLikesCount={product.likesCount}
+                initialIsLiked={product.isLiked}
+                size="lg"
+              />
+            </div>
+
             {/* Action Buttons */}
             <div className="flex gap-3">
               <Button className="flex-1 bg-orange-600 hover:bg-orange-700 text-lg py-6">
                 تماس با فروشنده
-              </Button>
-              <Button variant="outline" className="flex-1 text-lg py-6">
-                افزودن به علاقه‌مندی‌ها
               </Button>
             </div>
 

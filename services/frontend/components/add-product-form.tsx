@@ -33,6 +33,20 @@ const PRODUCT_TYPES = [
   'OTHER',
 ];
 
+const PRODUCT_TYPE_LABELS: Record<string, string> = {
+  RING: 'انگشتر',
+  BRACELET: 'دستبند',
+  NECKLACE: 'گردنبند',
+  EARRING: 'گوشواره',
+  BANGLE: 'النگو',
+  PENDANT: 'آویز',
+  ANKLET: 'پابند',
+  CHAIN: 'زنجیر',
+  COIN: 'سکه',
+  BAR: 'شمش',
+  OTHER: 'سایر',
+};
+
 interface AddProductFormProps {
   onSuccess: () => void;
   onCancel: () => void;
@@ -169,11 +183,15 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
         onSuccess();
       } else {
         const error = await response.json();
-        alert(error.message || 'ایجاد محصول ناموفق بود');
+        console.error('Error response:', error);
+        // Show detailed error message
+        const errorMessage = error.message || error.error || 'ایجاد محصول ناموفق بود';
+        alert(`خطا: ${errorMessage}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating product:', error);
-      alert('ایجاد محصول ناموفق بود. لطفاً دوباره امتحان کنید.');
+      const errorMessage = error?.message || 'ایجاد محصول ناموفق بود. لطفاً دوباره امتحان کنید.';
+      alert(`خطا: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -262,7 +280,7 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
               >
                 {PRODUCT_TYPES.map((type) => (
                   <option key={type} value={type}>
-                    {type}
+                    {PRODUCT_TYPE_LABELS[type]}
                   </option>
                 ))}
               </select>
