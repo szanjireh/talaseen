@@ -26,9 +26,12 @@ function AdminContent() {
   const [sellerRequests, setSellerRequests] = useState<Seller[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [products, setProducts] = useState<GoldProduct[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'PENDING' | 'ALL'>('PENDING');
-  const [activeTab, setActiveTab] = useState<'sellers' | 'announcements' | 'products'>('sellers');
+  const [activeTab, setActiveTab] = useState<'sellers' | 'announcements' | 'products' | 'users' | 'admins' | 'approved-sellers'>('sellers');
   
   // Announcement form
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
@@ -41,10 +44,67 @@ function AdminContent() {
       fetchSellerRequests();
     } else if (activeTab === 'announcements') {
       fetchAnnouncements();
-    } else {
+    } else if (activeTab === 'products') {
       fetchProducts();
+    } else if (activeTab === 'users') {
+      fetchUsers();
+    } else if (activeTab === 'admins') {
+      fetchAdmins();
+    } else if (activeTab === 'approved-sellers') {
+      fetchApprovedSellers();
     }
   }, [filter, activeTab]);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${api.baseURL}/auth/admin/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAdmins = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${api.baseURL}/auth/admin/admins`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAdmins(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch admins:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchApprovedSellers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${api.baseURL}/auth/admin/sellers`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSellers(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch sellers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchAnnouncements = async () => {
     try {
@@ -126,6 +186,31 @@ function AdminContent() {
       }
     } catch (error) {
       console.error('Failed to reject request:', error);
+    }
+  };
+
+  const handlePromoteToAdmin = async (userId: string) => {
+    if (!confirm('آیا مطمئن هستید که میخواهید این کاربر را به ادمین ارتقا دهید?')) {
+      return;
+    }
+    try {
+      const response = await fetch(`${api.baseURL}/auth/admin/users/${userId}/promote-to-admin`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        alert('کاربر با موفقیت به ادمین ارتقا یافت');
+        fetchUsers();
+        fetchAdmins();
+      } else {
+        const error = await response.json();
+        alert(error.message || 'خطا در ارتقا کاربر');
+      }
+    } catch (error) {
+      console.error('Failed to promote user:', error);
+      alert('خطا در ارتقا کاربر');
     }
   };
 
@@ -250,25 +335,46 @@ function AdminContent() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-2 border-b">
+        <div className="mb-6 flex gap-2 border-b overflow-x-auto">
           <Button
             variant={activeTab === 'sellers' ? 'default' : 'ghost'}
             onClick={() => setActiveTab('sellers')}
-            className="rounded-b-none"
+            className="rounded-b-none whitespace-nowrap"
           >
             درخواست‌های فروشنده
           </Button>
           <Button
+            variant={activeTab === 'approved-sellers' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('approved-sellers')}
+            className="rounded-b-none whitespace-nowrap"
+          >
+            فروشندگان تایید شده
+          </Button>
+          <Button
+            variant={activeTab === 'users' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('users')}
+            className="rounded-b-none whitespace-nowrap"
+          >
+            کاربران
+          </Button>
+          <Button
+            variant={activeTab === 'admins' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('admins')}
+            className="rounded-b-none whitespace-nowrap"
+          >
+            ادمین‌ها
+          </Button>
+          <Button
             variant={activeTab === 'announcements' ? 'default' : 'ghost'}
             onClick={() => setActiveTab('announcements')}
-            className="rounded-b-none"
+            className="rounded-b-none whitespace-nowrap"
           >
             اطلاعیه‌ها
           </Button>
           <Button
             variant={activeTab === 'products' ? 'default' : 'ghost'}
             onClick={() => setActiveTab('products')}
-            className="rounded-b-none"
+            className="rounded-b-none whitespace-nowrap"
           >
             محصولات
           </Button>
@@ -444,7 +550,7 @@ function AdminContent() {
               </div>
             )}
           </>
-        ) : (
+        ) : activeTab === 'products' ? (
           <>
             {/* Products Tab */}
             <div className="mb-4 text-right">
@@ -534,7 +640,175 @@ function AdminContent() {
               </div>
             )}
           </>
-        )}
+        ) : activeTab === 'users' ? (
+          <>
+            {/* Users Tab */}
+            <div className="mb-4 text-right">
+              <h3 className="text-xl font-semibold">کاربران ({users.length})</h3>
+              <p className="text-sm text-muted-foreground">لیست تمامی کاربران عادی</p>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              </div>
+            ) : users.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  هیچ کاربری یافت نشد
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {users.map((user) => (
+                  <Card key={user.id}>
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name)}
+                          alt={user.name}
+                          className="w-12 h-12 rounded-full"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base truncate text-right">{user.name}</CardTitle>
+                          <CardDescription className="text-sm truncate text-right">{user.email}</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">نقش:</span>{' '}
+                        <span className="font-medium">کاربر</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        عضویت: {new Date(user.createdAt).toLocaleDateString('fa-IR')}
+                      </div>
+                      <div className="pt-2">
+                        <Button
+                          onClick={() => handlePromoteToAdmin(user.id)}
+                          variant="default"
+                          size="sm"
+                          className="w-full"
+                        >
+                          ارتقا به ادمین
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </>
+        ) : activeTab === 'admins' ? (
+          <>
+            {/* Admins Tab */}
+            <div className="mb-4 text-right">
+              <h3 className="text-xl font-semibold">ادمین‌ها ({admins.length})</h3>
+              <p className="text-sm text-muted-foreground">لیست تمامی مدیران سیستم</p>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              </div>
+            ) : admins.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  هیچ ادمینی یافت نشد
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {admins.map((admin) => (
+                  <Card key={admin.id}>
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={admin.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(admin.name)}
+                          alt={admin.name}
+                          className="w-12 h-12 rounded-full"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base truncate text-right">{admin.name}</CardTitle>
+                          <CardDescription className="text-sm truncate text-right">{admin.email}</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">نقش:</span>{' '}
+                        <span className="font-medium text-orange-600">مدیر</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        عضویت: {new Date(admin.createdAt).toLocaleDateString('fa-IR')}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </>
+        ) : activeTab === 'approved-sellers' ? (
+          <>
+            {/* Approved Sellers Tab */}
+            <div className="mb-4 text-right">
+              <h3 className="text-xl font-semibold">فروشندگان تایید شده ({sellers.length})</h3>
+              <p className="text-sm text-muted-foreground">لیست تمامی فروشندگان فعال</p>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              </div>
+            ) : sellers.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  هیچ فروشنده‌ای یافت نشد
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {sellers.map((seller) => (
+                  <Card key={seller.id}>
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={seller.user?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(seller.shopName)}
+                          alt={seller.shopName}
+                          className="w-12 h-12 rounded-full"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base truncate text-right">{seller.shopName}</CardTitle>
+                          <CardDescription className="text-sm truncate text-right">
+                            {seller.user?.name} ({seller.user?.email})
+                          </CardDescription>
+                        </div>
+                        <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                          فعال
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">تعداد محصولات:</span>{' '}
+                          <span className="font-medium">{seller._count?.products || 0}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">نقش:</span>{' '}
+                          <span className="font-medium">{seller.user?.role}</span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        تایید شده در: {new Date(seller.createdAt).toLocaleDateString('fa-IR')}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </>
+        ) : null}
       </div>
     </div>
   );

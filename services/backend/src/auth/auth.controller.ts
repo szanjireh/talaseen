@@ -57,6 +57,30 @@ export class AuthController {
     return this.authService.getPendingSellers(req.user.id);
   }
 
+  @Get('admin/users')
+  @UseGuards(AuthGuard('jwt'))
+  async getAllUsers(@Req() req) {
+    return this.authService.getAllUsers(req.user.id);
+  }
+
+  @Get('admin/admins')
+  @UseGuards(AuthGuard('jwt'))
+  async getAllAdmins(@Req() req) {
+    return this.authService.getAllAdmins(req.user.id);
+  }
+
+  @Get('admin/sellers')
+  @UseGuards(AuthGuard('jwt'))
+  async getAllSellers(@Req() req) {
+    return this.authService.getAllSellers(req.user.id);
+  }
+
+  @Put('admin/users/:id/promote-to-admin')
+  @UseGuards(AuthGuard('jwt'))
+  async promoteUserToAdmin(@Req() req, @Param('id') userId: string) {
+    return this.authService.promoteUserToAdmin(req.user.id, userId);
+  }
+
   @Put('admin/sellers/:id/approve')
   @UseGuards(AuthGuard('jwt'))
   async approveSeller(@Req() req, @Param('id') id: string) {

@@ -130,6 +130,124 @@ export class AuthService {
     });
   }
 
+  async getAllUsers(adminUserId: string) {
+    // Verify admin
+    const admin = await this.prisma.user.findUnique({ where: { id: adminUserId } });
+    if (!admin || admin.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('Only admins can view users');
+    }
+
+    const users = await this.prisma.user.findMany({
+      where: {
+        role: UserRole.USER,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return users;
+  }
+
+  async getAllAdmins(adminUserId: string) {
+    // Verify admin
+    const admin = await this.prisma.user.findUnique({ where: { id: adminUserId } });
+    if (!admin || admin.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('Only admins can view admins');
+    }
+
+    const admins = await this.prisma.user.findMany({
+      where: {
+        role: UserRole.ADMIN,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return admins;
+  }
+
+  async getAllSellers(adminUserId: string) {
+    // Verify admin
+    const admin = await this.prisma.user.findUnique({ where: { id: adminUserId } });
+    if (!admin || admin.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('Only admins can view sellers');
+    }
+
+    const sellers = await this.prisma.seller.findMany({
+      where: {
+        isApproved: true,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+            role: true,
+          },
+        },
+        _count: {
+          select: {
+            goldProducts: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return sellers;
+  }
+
+  async promoteUserToAdmin(adminUserId: string, userId: string) {
+    // Verify admin
+    const admin = await this.prisma.user.findUnique({ where: { id: adminUserId } });
+    if (!admin || admin.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('Only admins can promote users');
+    }
+
+    // Get target user
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Check if already admin
+    if (user.role === UserRole.ADMIN) {
+      throw new ForbiddenException('User is already an admin');
+    }
+
+    // Promote to admin
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role: UserRole.ADMIN },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    return updatedUser;
+  }
+
   async approveSeller(adminUserId: string, sellerId: string) {
     // Verify admin
     const admin = await this.prisma.user.findUnique({ where: { id: adminUserId } });

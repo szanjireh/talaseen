@@ -5,8 +5,8 @@ import { AnnouncementBar } from '@/components/announcement-bar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LikeButton } from '@/components/like-button';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
 import { getImageUrl } from '@/lib/utils';
@@ -31,21 +31,44 @@ interface Product {
   isLiked?: boolean;
 }
 
-export default function ProductsPage() {
+function ProductsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  
+  // Get type filter from URL
+  const typeFilter = searchParams.get('type');
+
+  // Category name mapping
+  const categoryNames: Record<string, string> = {
+    RING: 'انگشتر',
+    NECKLACE: 'گردنبند',
+    BRACELET: 'دستبند',
+    EARRING: 'گوشواره',
+    BANGLE: 'النگو',
+    PENDANT: 'آویز',
+    ANKLET: 'پابند',
+    CHAIN: 'زنجیر',
+    COIN: 'سکه',
+    BAR: 'شمش',
+    OTHER: 'سایر',
+  };
 
   useEffect(() => {
     fetchProducts();
-  }, [page]);
+  }, [page, typeFilter]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(api.products.getAll({ page: String(page), limit: '12' }));
+      const params: any = { page: String(page), limit: '12' };
+      if (typeFilter) {
+        params.type = typeFilter;
+      }
+      const response = await fetch(api.products.getAll(params));
       const data = await response.json();
       setProducts(data.products || []);
       setTotalPages(data.pagination?.pages || 1);
@@ -64,11 +87,20 @@ export default function ProductsPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 text-right">
           <h1 className="text-3xl font-bold text-gray-900">
-            تمام محصولات
+            {typeFilter ? `محصولات ${categoryNames[typeFilter] || typeFilter}` : 'تمام محصولات'}
           </h1>
           <p className="text-gray-600 mt-2">
             {loading ? 'در حال بارگذاری...' : `${products.length} محصول در این صفحه`}
           </p>
+          {typeFilter && (
+            <Button
+              onClick={() => router.push('/products')}
+              variant="outline"
+              className="mt-2"
+            >
+              نمایش همه محصولات
+            </Button>
+          )}
         </div>
 
         {loading ? (
@@ -183,5 +215,23 @@ export default function ProductsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white">
+        <Header />
+        <AnnouncementBar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    }>
+      <ProductsContent />
+    </Suspense>
   );
 }

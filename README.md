@@ -1,6 +1,12 @@
 # Talaseen - Iranian Gold Marketplace 🪙
 
+[![CI Pipeline](https://github.com/YOUR_USERNAME/talaseen/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/talaseen/actions/workflows/ci.yml)
+[![CD Pipeline](https://github.com/YOUR_USERNAME/talaseen/actions/workflows/cd.yml/badge.svg)](https://github.com/YOUR_USERNAME/talaseen/actions/workflows/cd.yml)
+[![Deploy](https://github.com/YOUR_USERNAME/talaseen/actions/workflows/deploy.yml/badge.svg)](https://github.com/YOUR_USERNAME/talaseen/actions/workflows/deploy.yml)
+
 A modern, Etsy-inspired marketplace platform for Iranian gold sellers to showcase and sell their gold jewelry products.
+
+> 📖 **CI/CD Documentation:** See [CICD_INDEX.md](CICD_INDEX.md) for complete CI/CD setup guide
 
 ## 🌟 Features
 
@@ -177,7 +183,33 @@ VITE_API_URL=http://localhost:4000
 - **frontend**: Next.js application
 - **vendor-panel**: Vite development server
 
-## 📝 Development Notes
+## � CI/CD Pipeline
+
+This project includes a complete CI/CD pipeline with GitHub Actions:
+
+### Available Workflows
+- **CI Pipeline**: Automated testing and building on every push/PR
+- **CD Pipeline**: Build and push Docker images to Docker Hub
+- **Deploy Pipeline**: Automated deployment to production server
+
+### Setup Instructions
+For detailed setup instructions, see:
+- [Complete CI/CD Setup Guide (Persian)](CICD_SETUP_GUIDE.md)
+- [GitHub Secrets Reference](GITHUB_SECRETS.md)
+- [Setup Checklist](CICD_CHECKLIST.md)
+
+### Quick Setup
+1. Create Docker Hub account and repositories
+2. Add GitHub Secrets (see [GITHUB_SECRETS.md](GITHUB_SECRETS.md))
+3. Push to GitHub - workflows run automatically!
+
+### Local Testing
+```bash
+# Test CI pipeline locally
+./test-ci-local.sh
+```
+
+## �📝 Development Notes
 
 ### For MVP Presentation (8 days)
 This is a functional MVP with:

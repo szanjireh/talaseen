@@ -5,6 +5,36 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
+  async getCategoryCounts() {
+    const counts = await this.prisma.goldProduct.groupBy({
+      by: ['type'],
+      _count: {
+        id: true,
+      },
+    });
+
+    // Map English types to Persian names
+    const typeNames: Record<string, string> = {
+      RING: 'انگشتر',
+      NECKLACE: 'گردنبند',
+      BRACELET: 'دستبند',
+      EARRING: 'گوشواره',
+      BANGLE: 'النگو',
+      PENDANT: 'آویز',
+      ANKLET: 'پابند',
+      CHAIN: 'زنجیر',
+      COIN: 'سکه',
+      BAR: 'شمش',
+      OTHER: 'سایر',
+    };
+
+    return counts.map(item => ({
+      type: item.type,
+      name: typeNames[item.type] || item.type,
+      count: item._count.id,
+    }));
+  }
+
   async search(query: string, filters?: any) {
     const { 
       page = 1, 

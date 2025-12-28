@@ -16,7 +16,9 @@ export default function Home() {
   const { isAuthenticated, isUser } = useAuth();
   const [showSellerDialog, setShowSellerDialog] = useState(false);
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   // Fetch featured products from API
   useEffect(() => {
@@ -38,14 +40,25 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  const categories = [
-    { name: 'انگشتر', count: 234 },
-    { name: 'گردنبند', count: 156 },
-    { name: 'دستبند', count: 189 },
-    { name: 'گوشواره', count: 278 },
-    { name: 'النگو', count: 145 },
-    { name: 'آویز', count: 98 },
-  ];
+  // Fetch category counts from API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const response = await fetch(`${api.baseURL}/products/categories/counts`);
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -79,17 +92,24 @@ export default function Home() {
         {/* Categories */}
         <section className="py-12 border-b">
           <div className="container mx-auto px-4">
-            <div className="flex gap-6 overflow-x-auto pb-4">
-              {categories.map((category) => (
-                <button
-                  key={category.name}
-                  className="flex-shrink-0 px-6 py-3 rounded-full border-2 border-gray-200 hover:border-orange-600 hover:text-orange-600 transition-colors"
-                >
-                  <span className="font-medium">{category.name}</span>
-                  <span className="ml-2 text-sm text-gray-500">({category.count})</span>
-                </button>
-              ))}
-            </div>
+            {categoriesLoading ? (
+              <div className="text-center py-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
+              </div>
+            ) : (
+              <div className="flex gap-6 overflow-x-auto pb-4">
+                {categories.map((category) => (
+                  <a
+                    key={category.type}
+                    href={`/products?type=${category.type}`}
+                    className="flex-shrink-0 px-6 py-3 rounded-full border-2 border-gray-200 hover:border-orange-600 hover:text-orange-600 transition-colors"
+                  >
+                    <span className="font-medium">{category.name}</span>
+                    <span className="ml-2 text-sm text-gray-500">({category.count})</span>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

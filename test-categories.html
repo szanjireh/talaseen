@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست دسته‌ها</title>
+    <style>
+        body {
+            font-family: Vazirmatn, sans-serif;
+            padding: 20px;
+            direction: rtl;
+        }
+        .category {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .category:hover {
+            border-color: #f97316;
+            color: #f97316;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>تست دسته‌بندی محصولات</h1>
+    <div id="categories" class="loading">در حال بارگذاری...</div>
+    <hr>
+    <h2>لاگ:</h2>
+    <pre id="log"></pre>
+
+    <script>
+        const log = document.getElementById('log');
+        const categoriesDiv = document.getElementById('categories');
+
+        function addLog(message) {
+            log.textContent += message + '\n';
+            console.log(message);
+        }
+
+        addLog('شروع بارگذاری دسته‌ها...');
+        
+        fetch('http://localhost:4000/api/products/categories/counts')
+            .then(response => {
+                addLog('پاسخ دریافت شد: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                addLog('داده‌های دریافت شده: ' + JSON.stringify(data, null, 2));
+                
+                categoriesDiv.innerHTML = '';
+                
+                if (data && data.length > 0) {
+                    data.forEach(category => {
+                        const link = document.createElement('a');
+                        link.href = `/products?type=${category.type}`;
+                        link.className = 'category';
+                        link.innerHTML = `
+                            <span>${category.name}</span>
+                            <span style="color: #999;">(${category.count})</span>
+                        `;
+                        categoriesDiv.appendChild(link);
+                        addLog(`دسته اضافه شد: ${category.name} (${category.count})`);
+                    });
+                } else {
+                    categoriesDiv.textContent = 'هیچ دسته‌ای یافت نشد';
+                    addLog('آرایه داده خالی است');
+                }
+            })
+            .catch(error => {
+                addLog('خطا: ' + error.message);
+                categoriesDiv.textContent = 'خطا در بارگذاری: ' + error.message;
+            });
+    </script>
+</body>
+</html>

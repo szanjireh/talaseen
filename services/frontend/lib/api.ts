@@ -1,6 +1,8 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export const api = {
+  baseURL: API_URL,
+  
   // Auth endpoints
   auth: {
     googleLogin: () => `${API_URL}/auth/google`,

@@ -12,6 +12,11 @@ export class ProductsController {
     private prisma: PrismaService,
   ) {}
 
+  @Get('categories/counts')
+  async getCategoryCounts() {
+    return this.productsService.getCategoryCounts();
+  }
+
   @Get('search')
   search(@Query('q') query: string, @Query() filters: any, @Req() req) {
     const userId = req.user?.id;
