@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: talaseen-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    image: talaseen/backend:latest
+    container_name: talaseen-backend
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PORT: 4000
+      NODE_ENV: production
+    expose:
+      - "4000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    image: talaseen/frontend:latest
+    container_name: talaseen-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: https://talaseen.com/api
+      INTERNAL_API_URL: http://backend:4000/api
+      NODE_ENV: production
+    ports:
+      - "80:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
