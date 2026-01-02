@@ -9,6 +9,9 @@ const nextConfig = {
     return config;
   },
   
+  // Ensure assets are served correctly
+  output: 'standalone',
+  
   // Add CORS headers for fonts and static assets
   async headers() {
     return [
