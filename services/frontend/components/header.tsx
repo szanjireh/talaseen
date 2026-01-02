@@ -30,38 +30,43 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
+    <header className="sticky top-0 z-50 w-full border-b-2 border-amber-200/50 bg-white/95 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-orange-600">طلاسین</div>
+        <div className="flex h-20 items-center justify-between gap-4">
+          {/* Logo - Premium Gold */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gold-gradient rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+              <div className="relative px-4 py-2 bg-gold-gradient rounded-xl shadow-lg">
+                <span className="text-2xl font-extrabold text-gray-900">طلاسین</span>
+              </div>
+            </div>
           </Link>
 
-          {/* Search Bar */}
+          {/* Search Bar - Enhanced */}
           <form 
             onSubmit={handleSearch}
             className="hidden md:flex flex-1 max-w-2xl mx-8"
           >
-            <div className="relative w-full">
+            <div className="relative w-full group">
               <Input
                 type="text"
-                placeholder="جستجو در طلاسین..."
+                placeholder="جستجو در محصولات طلا و جواهر..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 pr-12 rounded-full border-2 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                className="w-full h-14 pr-14 rounded-2xl border-2 border-amber-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 bg-white shadow-sm transition-all"
               />
               <Button
                 type="submit"
                 size="icon"
-                className="absolute right-1 top-1 h-10 w-10 rounded-full bg-orange-600 hover:bg-orange-700"
+                className="absolute right-2 top-2 h-10 w-10 rounded-xl bg-gold-gradient hover:opacity-90 shadow-md transition-opacity text-gray-900"
               >
                 <Search className="h-5 w-5" />
               </Button>
             </div>
           </form>
 
-          {/* Auth Buttons */}
+          {/* Auth Buttons - Premium Design */}
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
@@ -69,9 +74,9 @@ export function Header() {
                   <Button
                     variant="outline"
                     onClick={() => router.push('/admin')}
-                    className="border-purple-300 hover:border-purple-600 hover:text-purple-600 text-purple-600"
+                    className="border-2 border-purple-300 hover:border-purple-600 hover:bg-purple-50 text-purple-600 font-semibold transition-all"
                   >
-                    پنل مدیر
+                    👑 پنل مدیر
                   </Button>
                 )}
                 
@@ -79,27 +84,27 @@ export function Header() {
                   <Button
                     variant="outline"
                     onClick={() => router.push('/dashboard')}
-                    className="border-gray-300 hover:border-orange-600 hover:text-orange-600"
+                    className="border-2 border-amber-300 hover:border-amber-600 hover:bg-amber-50 text-amber-700 font-semibold transition-all"
                   >
-                    پنل فروشنده
+                    🏪 پنل فروشنده
                   </Button>
                 )}
                 
-                {/* User Menu */}
+                {/* User Menu - Enhanced */}
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-gray-50 transition-all border-2 border-transparent hover:border-orange-200"
+                    className="flex items-center gap-3 px-4 py-2 rounded-2xl hover:bg-amber-50 transition-all border-2 border-transparent hover:border-amber-300 shadow-sm hover:shadow-md"
                   >
                     {user?.avatar ? (
                       <img 
                         src={user.avatar} 
                         alt={user.name || 'User'} 
-                        className="w-10 h-10 rounded-full ring-2 ring-orange-200 object-cover"
+                        className="w-11 h-11 rounded-full ring-2 ring-amber-300 object-cover"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center ring-2 ring-orange-200 shadow-sm">
-                        <User className="w-5 h-5 text-white" />
+                      <div className="w-11 h-11 rounded-full bg-gold-gradient flex items-center justify-center ring-2 ring-amber-300 shadow-md">
+                        <User className="w-6 h-6 text-gray-900" />
                       </div>
                     )}
                     <div className="hidden sm:flex flex-col items-start">
@@ -260,36 +265,36 @@ export function Header() {
                 <Button
                   variant="ghost"
                   onClick={() => router.push('/login')}
-                  className="hover:text-orange-600"
+                  className="hover:text-amber-600 hover:bg-amber-50 font-semibold"
                 >
                   ورود
                 </Button>
                 <Button
                   onClick={() => router.push('/login')}
-                  className="bg-orange-600 hover:bg-orange-700"
+                  className="bg-gold-gradient hover:opacity-90 text-gray-900 font-bold shadow-lg shadow-amber-500/30 px-6 transition-opacity"
                 >
-                  فروش در طلاسین
+                  🏪 فروش در طلاسین
                 </Button>
               </>
             )}
           </div>
         </div>
 
-        {/* Mobile Search */}
-        <div className="md:hidden pb-3">
+        {/* Mobile Search - Enhanced */}
+        <div className="md:hidden pb-4">
           <form onSubmit={handleSearch}>
             <div className="relative">
               <Input
                 type="text"
-                placeholder="جستجو در طلاسین..."
+                placeholder="جستجو در محصولات..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 pr-11 rounded-full border-2 border-gray-300 focus:border-orange-500"
+                className="w-full h-12 pr-12 rounded-2xl border-2 border-amber-200 focus:border-amber-500"
               />
               <Button
                 type="submit"
                 size="icon"
-                className="absolute right-1 top-0.5 h-9 w-9 rounded-full bg-orange-600 hover:bg-orange-700"
+                className="absolute right-1 top-1 h-10 w-10 rounded-xl bg-gold-gradient hover:opacity-90 text-gray-900"
               >
                 <Search className="h-4 w-4" />
               </Button>
