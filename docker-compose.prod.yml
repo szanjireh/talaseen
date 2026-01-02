@@ -43,9 +43,10 @@ services:
     image: talaseen/frontend:latest
     container_name: talaseen-frontend
     environment:
-      NEXT_PUBLIC_API_URL: http://talaseen.com/api
+      NEXT_PUBLIC_API_URL: /api
       INTERNAL_API_URL: http://backend:4000/api
       NODE_ENV: production
+      HOSTNAME: 0.0.0.0
     expose:
       - "3000"
     depends_on:
