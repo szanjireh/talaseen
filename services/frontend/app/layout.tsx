@@ -97,7 +97,7 @@ export default function RootLayout({
 
                 {/* Bottom Bar */}
                 <div className="border-t border-amber-500/20 pt-6">
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
                     <p className="text-amber-200/50 text-sm">© ۲۰۲۶ طلاسین - تمامی حقوق محفوظ است</p>
                     <div className="flex gap-6">
                       <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-amber-200 hover:text-amber-400 transition-colors flex items-center gap-1">
@@ -111,6 +111,24 @@ export default function RootLayout({
                       </a>
                       <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-amber-200 hover:text-amber-400 transition-colors flex items-center gap-1">
                         <span>👍</span> <span>فیسبوک</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Developer Credit */}
+                  <div className="border-t border-amber-500/10 pt-4 text-center">
+                    <p className="text-amber-200/70 text-xs mb-2">
+                      طراحی و توسعه توسط <span className="font-semibold text-amber-300">سجاد زنجیره</span>
+                    </p>
+                    <div className="flex justify-center gap-4 text-xs">
+                      <a href="mailto:s.zanjireh@gmail.com" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1">
+                        <span>📧</span>
+                        <span>s.zanjireh@gmail.com</span>
+                      </a>
+                      <span className="text-amber-500/30">•</span>
+                      <a href="tel:+989141608334" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1">
+                        <span>📱</span>
+                        <span>+98 914 160 8334</span>
                       </a>
                     </div>
                   </div>

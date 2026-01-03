@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Zap, Gift } from 'lucide-react';
 
+interface Cell {
+  type: 'gem' | 'bomb' | 'bonus' | 'sparkle';
+  revealed: boolean;
+  adjacentBombs: number;
+}
+
 export default function GamesPage() {
   const [gameStarted, setGameStarted] = useState(false);
   const [gems, setGems] = useState(0);
@@ -12,8 +18,10 @@ export default function GamesPage() {
   const [gameOver, setGameOver] = useState(false);
   const [discountCode, setDiscountCode] = useState<string | null>(null);
   const [discountPercent, setDiscountPercent] = useState(0);
-  const [cells, setCells] = useState<string[]>([]);
+  const [cells, setCells] = useState<Cell[]>([]);
   const [gameLevel, setGameLevel] = useState(1);
+  const GRID_SIZE = 8;
+  const TOTAL_CELLS = GRID_SIZE * GRID_SIZE; // 64 cells
 
   // Generate random discount code
   const generateDiscountCode = (gemCount: number) => {
@@ -25,23 +33,55 @@ export default function GamesPage() {
       { percent: 25, prefix: 'GOLD25' },
     ];
 
-    const discountLevel = Math.min(Math.floor(gemCount / 50), codes.length - 1);
+    const discountLevel = Math.min(Math.floor(gemCount / 100), codes.length - 1);
     const selected = codes[discountLevel];
     const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
     return `${selected.prefix}${randomSuffix}`;
   };
 
+  // Count adjacent bombs for a cell
+  const countAdjacentBombs = (index: number, cellsArray: Cell[]) => {
+    const row = Math.floor(index / GRID_SIZE);
+    const col = index % GRID_SIZE;
+    let count = 0;
+
+    for (let r = row - 1; r <= row + 1; r++) {
+      for (let c = col - 1; c <= col + 1; c++) {
+        if (r >= 0 && r < GRID_SIZE && c >= 0 && c < GRID_SIZE && !(r === row && c === col)) {
+          const neighborIndex = r * GRID_SIZE + c;
+          if (cellsArray[neighborIndex].type === 'bomb') {
+            count++;
+          }
+        }
+      }
+    }
+    return count;
+  };
+
   // Initialize game
   const initializeGame = () => {
-    const newCells = Array(16)
-      .fill('')
+    const newCells: Cell[] = Array(TOTAL_CELLS)
+      .fill(null)
       .map(() => {
         const rand = Math.random();
-        if (rand < 0.4) return '💎'; // Gem
-        if (rand < 0.6) return '💣'; // Bomb
-        if (rand < 0.8) return '⚡'; // Bonus
-        return '✨'; // Sparkle
+        let type: 'gem' | 'bomb' | 'bonus' | 'sparkle';
+        if (rand < 0.25) type = 'gem'; // 25% gems
+        else if (rand < 0.45) type = 'bomb'; // 20% bombs
+        else if (rand < 0.65) type = 'bonus'; // 20% bonus
+        else type = 'sparkle'; // 35% sparkle
+
+        return {
+          type,
+          revealed: false,
+          adjacentBombs: 0,
+        };
       });
+
+    // Calculate adjacent bombs for each cell
+    newCells.forEach((cell, index) => {
+      cell.adjacentBombs = countAdjacentBombs(index, newCells);
+    });
+
     setCells(newCells);
     setGems(0);
     setLives(3);
@@ -54,53 +94,76 @@ export default function GamesPage() {
   const handleCellClick = (index: number) => {
     if (gameOver || !gameStarted) return;
 
-    const cell = cells[index];
+    const newCells = [...cells];
+    const cell = newCells[index];
 
-    if (cell === '💎') {
+    if (cell.revealed) return; // Already revealed
+
+    cell.revealed = true;
+
+    if (cell.type === 'gem') {
       // Gem collected!
       setGems(gems + 10);
       setScore(score + 100);
-      cells[index] = '✓';
-    } else if (cell === '💣') {
+    } else if (cell.type === 'bomb') {
       // Hit bomb
-      setLives(lives - 1);
-      cells[index] = '✗';
-      if (lives - 1 === 0) {
-        endGame();
+      const newLives = lives - 1;
+      setLives(newLives);
+      if (newLives === 0) {
+        setGameOver(true);
+        if (gems > 0) {
+          const code = generateDiscountCode(gems);
+          setDiscountCode(code);
+          const percent = Math.min(5 + Math.floor(gems / 100), 25);
+          setDiscountPercent(percent);
+        }
+        setCells(newCells);
         return;
       }
-    } else if (cell === '⚡') {
+    } else if (cell.type === 'bonus') {
       // Bonus! Extra gems
       setGems(gems + 25);
       setScore(score + 250);
-      cells[index] = '⚡✓';
-    } else if (cell === '✨') {
-      // Sparkle - extra life or points
+    } else if (cell.type === 'sparkle') {
+      // Sparkle - extra points
       setScore(score + 50);
-      cells[index] = '✨✓';
     }
 
-    setCells([...cells]);
+    setCells(newCells);
   };
 
-  const endGame = () => {
-    setGameOver(true);
-    if (gems > 0) {
-      const code = generateDiscountCode(gems);
-      setDiscountCode(code);
-      const percent = Math.min(5 + Math.floor(gems / 50), 25);
-      setDiscountPercent(percent);
+  const getCellDisplay = (cell: Cell) => {
+    if (!cell.revealed) {
+      return '?';
     }
+
+    if (cell.type === 'bomb') return '💣';
+    if (cell.type === 'gem') return '💎';
+    if (cell.type === 'bonus') return '⚡';
+    if (cell.type === 'sparkle') {
+      if (cell.adjacentBombs === 0) return '✨';
+      return cell.adjacentBombs.toString();
+    }
+    return '';
   };
 
-  const completeLevel = () => {
-    // Check if all gems collected
-    const remainingGems = cells.filter(c => c === '💎').length;
-    if (remainingGems === 0) {
-      setGameLevel(gameLevel + 1);
-      initializeGame();
+  const getCellBgColor = (cell: Cell) => {
+    if (!cell.revealed) {
+      return 'bg-gradient-to-br from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 cursor-pointer border-2 border-gray-500 shadow-md hover:shadow-lg';
     }
+
+    if (cell.type === 'bomb') return 'bg-red-500 border-2 border-red-700';
+    if (cell.type === 'gem') return 'bg-blue-500 border-2 border-blue-700';
+    if (cell.type === 'bonus') return 'bg-yellow-500 border-2 border-yellow-700';
+    if (cell.type === 'sparkle') return 'bg-pink-400 border-2 border-pink-600';
+    return 'bg-gray-300 border-2 border-gray-400';
   };
+
+  const countRevealedGems = () => {
+    return cells.filter(c => c.revealed && c.type === 'gem').length;
+  };
+
+  const totalGems = cells.filter(c => c.type === 'gem').length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-amber-50">
@@ -117,11 +180,11 @@ export default function GamesPage() {
 
       <div className="container mx-auto px-4 py-12">
         {/* Game Info */}
-        <div className="max-w-2xl mx-auto mb-8">
+        <div className="max-w-5xl mx-auto mb-8">
           <div className="bg-white rounded-3xl shadow-xl border-2 border-purple-200 p-8">
             <div className="text-center mb-6">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">💎 جمع‌آوری جواهر</h2>
-              <p className="text-gray-600">روی خانه‌ها کلیک کنید تا جواهر پیدا کنید. از بمب‌ها احتیاط کنید!</p>
+              <p className="text-gray-600">روی خانه‌های پنهان کلیک کنید تا محتوای آن‌ها را کشف کنید. از بمب‌ها احتیاط کنید!</p>
             </div>
 
             {!gameStarted ? (
@@ -137,13 +200,13 @@ export default function GamesPage() {
             ) : gameOver ? (
               <div className="text-center space-y-6">
                 <div className="text-6xl animate-bounce">
-                  {gems > 100 ? '🎉' : gems > 50 ? '😄' : '😊'}
+                  {gems > 200 ? '🎉' : gems > 100 ? '😄' : '😊'}
                 </div>
                 
                 <div className="space-y-2">
                   <p className="text-2xl font-bold text-gray-900">بازی تمام شد!</p>
                   <p className="text-gray-600">امتیاز شما: <span className="font-bold text-purple-600">{score}</span></p>
-                  <p className="text-gray-600">جواهر جمع‌آوری شده: <span className="font-bold text-blue-600">{gems}</span></p>
+                  <p className="text-gray-600">جواهر جمع‌آوری شده: <span className="font-bold text-blue-600">{gems}</span> / {totalGems}</p>
                 </div>
 
                 {discountCode ? (
@@ -164,7 +227,7 @@ export default function GamesPage() {
                   </div>
                 ) : (
                   <div className="bg-red-50 rounded-2xl p-4 border-2 border-red-200">
-                    <p className="text-red-700 font-semibold">درایت بیشتری برای برنده شدن!</p>
+                    <p className="text-red-700 font-semibold">درایت بیشتری برای برنده شدن! حداقل ۱۰۰ امتیاز لازم است.</p>
                   </div>
                 )}
 
@@ -178,44 +241,48 @@ export default function GamesPage() {
             ) : (
               <div className="space-y-6">
                 {/* Stats Bar */}
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-4 gap-4 mb-6">
                   <div className="bg-blue-50 rounded-xl p-4 text-center border-2 border-blue-200">
-                    <p className="text-sm text-gray-600 mb-1">جواهر</p>
-                    <p className="text-3xl font-bold text-blue-600">💎 {gems}</p>
+                    <p className="text-xs text-gray-600 mb-1">جواهر</p>
+                    <p className="text-2xl font-bold text-blue-600">💎 {gems}/{totalGems}</p>
                   </div>
                   <div className="bg-red-50 rounded-xl p-4 text-center border-2 border-red-200">
-                    <p className="text-sm text-gray-600 mb-1">جان</p>
-                    <p className="text-3xl font-bold text-red-600">❤️ {lives}</p>
+                    <p className="text-xs text-gray-600 mb-1">جان</p>
+                    <p className="text-2xl font-bold text-red-600">❤️ {lives}</p>
                   </div>
                   <div className="bg-purple-50 rounded-xl p-4 text-center border-2 border-purple-200">
-                    <p className="text-sm text-gray-600 mb-1">امتیاز</p>
-                    <p className="text-3xl font-bold text-purple-600">⭐ {score}</p>
+                    <p className="text-xs text-gray-600 mb-1">امتیاز</p>
+                    <p className="text-2xl font-bold text-purple-600">⭐ {score}</p>
+                  </div>
+                  <div className="bg-yellow-50 rounded-xl p-4 text-center border-2 border-yellow-200">
+                    <p className="text-xs text-gray-600 mb-1">سطح</p>
+                    <p className="text-2xl font-bold text-yellow-600">📊 {gameLevel}</p>
                   </div>
                 </div>
 
                 {/* Game Grid */}
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-2xl border-3 border-purple-300">
-                  <div className="grid grid-cols-4 gap-3">
+                <div className="bg-gradient-to-br from-gray-200 to-gray-300 p-6 rounded-2xl border-4 border-gray-400 overflow-x-auto">
+                  <div className="inline-block" style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
+                    gap: '6px',
+                    width: 'fit-content',
+                    margin: '0 auto'
+                  }}>
                     {cells.map((cell, index) => (
                       <button
                         key={index}
                         onClick={() => handleCellClick(index)}
                         className={`
-                          aspect-square rounded-xl font-bold text-2xl transition-all duration-200
-                          ${cell === '' ? 'bg-white border-2 border-gray-300 hover:border-purple-500 hover:scale-105 cursor-pointer' : ''}
-                          ${cell === '💎' ? 'bg-blue-400 border-2 border-blue-600 animate-bounce' : ''}
-                          ${cell === '✓' ? 'bg-green-400 border-2 border-green-600' : ''}
-                          ${cell === '✗' ? 'bg-red-400 border-2 border-red-600' : ''}
-                          ${cell === '💣' ? 'bg-gray-500 border-2 border-gray-700' : ''}
-                          ${cell === '⚡' ? 'bg-yellow-400 border-2 border-yellow-600 animate-pulse' : ''}
-                          ${cell === '⚡✓' ? 'bg-yellow-300 border-2 border-yellow-600' : ''}
-                          ${cell === '✨' ? 'bg-pink-300 border-2 border-pink-500' : ''}
-                          ${cell === '✨✓' ? 'bg-pink-200 border-2 border-pink-500' : ''}
-                          shadow-md hover:shadow-lg flex items-center justify-center
+                          w-12 h-12 md:w-14 md:h-14 rounded-lg font-bold text-lg md:text-xl transition-all duration-200
+                          ${getCellBgColor(cell)}
+                          ${!cell.revealed ? 'hover:scale-110 active:scale-95' : ''}
+                          flex items-center justify-center
+                          ${cell.revealed && cell.type === 'sparkle' && cell.adjacentBombs > 0 ? 'text-gray-900 font-black' : 'text-white'}
                         `}
-                        disabled={gameOver}
+                        disabled={gameOver || cell.revealed}
                       >
-                        {cell}
+                        {getCellDisplay(cell)}
                       </button>
                     ))}
                   </div>
@@ -224,11 +291,13 @@ export default function GamesPage() {
                 {/* Legend */}
                 <div className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
                   <p className="text-sm font-semibold text-gray-700 mb-3">راهنما:</p>
-                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                    <div>💎 = جواهر (۱۰ امتیاز)</div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs md:text-sm text-gray-600">
+                    <div>💎 = جواهر (۱۰۰ امتیاز)</div>
                     <div>💣 = بمب (-۱ جان)</div>
-                    <div>⚡ = تقویت‌کننده (۲۵ امتیاز)</div>
+                    <div>⚡ = تقویت‌کننده (۲۵۰ امتیاز)</div>
                     <div>✨ = درخشش (۵۰ امتیاز)</div>
+                    <div>? = خانه پنهان</div>
+                    <div>عدد = بمب‌های مجاور</div>
                   </div>
                 </div>
               </div>
@@ -258,3 +327,4 @@ export default function GamesPage() {
     </div>
   );
 }
+

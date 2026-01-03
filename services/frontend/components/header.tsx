@@ -272,17 +272,21 @@ export function Header() {
             ) : (
               <>
                 <Button
-                  variant="ghost"
                   onClick={() => router.push('/login')}
-                  className="hover:text-amber-600 hover:bg-amber-50 font-semibold"
+                  className="group relative inline-flex items-center gap-2 px-5 py-2 rounded-xl border-2 border-amber-500 hover:border-amber-700 bg-white hover:bg-amber-50 text-amber-700 font-bold transition-all hover:shadow-md overflow-hidden"
                 >
-                  ورود
+                  <span className="text-lg">🔓</span>
+                  <span>ورود</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
                 </Button>
+                
                 <Button
                   onClick={() => router.push('/login')}
-                  className="bg-gold-gradient hover:opacity-90 text-gray-900 font-bold shadow-lg shadow-amber-500/30 px-6 transition-opacity"
+                  className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:via-orange-600 hover:to-amber-700 text-white font-bold shadow-lg shadow-amber-500/40 px-6 py-2 rounded-xl transition-all hover:shadow-xl hover:shadow-amber-500/60 hover:scale-105"
                 >
-                  🏪 فروش در طلاسین
+                  <span className="text-xl">🏪</span>
+                  <span>فروش در طلاسین</span>
+                  <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 blur opacity-30 group-hover:opacity-50 transition-opacity -z-10"></div>
                 </Button>
               </>
             )}
