@@ -327,6 +327,201 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Statistics Section - Impact Numbers */}
+        <section className="py-20 bg-charcoal-gradient relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500 rounded-full blur-3xl"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-3">طلاسین در اعداد</h2>
+              <p className="text-amber-200">ارقام موفقیت ما در بازار</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="text-center text-white">
+                <div className="text-5xl font-extrabold text-gold-gradient mb-2">۱۰۰+</div>
+                <p className="text-amber-200 font-semibold">فروشنده معتبر</p>
+              </div>
+              <div className="text-center text-white">
+                <div className="text-5xl font-extrabold text-gold-gradient mb-2">۵۰۰۰+</div>
+                <p className="text-amber-200 font-semibold">محصول برتر</p>
+              </div>
+              <div className="text-center text-white">
+                <div className="text-5xl font-extrabold text-gold-gradient mb-2">۲۴/۷</div>
+                <p className="text-amber-200 font-semibold">پشتیبانی دوازده‌ساعته</p>
+              </div>
+              <div className="text-center text-white">
+                <div className="text-5xl font-extrabold text-gold-gradient mb-2">۹۹٪</div>
+                <p className="text-amber-200 font-semibold">رضایت مشتریان</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works - Process Section */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-3">چگونه کار می‌کند؟</h2>
+              <p className="text-gray-600 text-lg">۴ مرحله ساده برای خرید طلای بهترین</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+              <div className="relative text-center">
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                  ۱
+                </div>
+                <div className="pt-12 px-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">جستجو و مقایسه</h3>
+                  <p className="text-gray-600 leading-relaxed">بازار را جستجو کنید و قیمت‌ها را با هزاران محصول مقایسه کنید</p>
+                </div>
+              </div>
+
+              <div className="relative text-center">
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                  ۲
+                </div>
+                <div className="pt-12 px-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">انتخاب محصول</h3>
+                  <p className="text-gray-600 leading-relaxed">بهترین گزینه‌ را انتخاب کنید و از فروشنده معتبر بخرید</p>
+                </div>
+              </div>
+
+              <div className="relative text-center">
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                  ۳
+                </div>
+                <div className="pt-12 px-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">پرداخت امن</h3>
+                  <p className="text-gray-600 leading-relaxed">درگاه پرداخت ایمن و رمزگذاری شده استفاده کنید</p>
+                </div>
+              </div>
+
+              <div className="relative text-center">
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                  ۴
+                </div>
+                <div className="pt-12 px-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">دریافت محصول</h3>
+                  <p className="text-gray-600 leading-relaxed">محصول را به آدرسی که انتخاب کردید دریافت کنید</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Connection lines */}
+            <div className="hidden md:flex justify-between px-8 absolute w-full top-32" style={{pointerEvents: 'none'}}>
+              <div className="flex-1 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mt-6 mx-2"></div>
+              <div className="flex-1 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mt-6 mx-2"></div>
+              <div className="flex-1 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mt-6 mx-2"></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section - Detailed Benefits */}
+        <section className="py-20 bg-gradient-to-b from-amber-50/50 to-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-3">ویژگی‌های منحصر به فرد</h2>
+              <p className="text-gray-600 text-lg">تجربه خریدی که دیگری ندارد</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="flex gap-6 p-6 rounded-2xl bg-white border-2 border-amber-100 hover:border-amber-400 hover:shadow-lg transition-all group">
+                <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="text-2xl">🔍</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">جستجوی هوشمند</h3>
+                  <p className="text-gray-600 leading-relaxed">فیلترهای پیشرفته برای یافتن دقیق طلای مورد نظرتان</p>
+                </div>
+              </div>
+
+              <div className="flex gap-6 p-6 rounded-2xl bg-white border-2 border-amber-100 hover:border-amber-400 hover:shadow-lg transition-all group">
+                <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="text-2xl">💰</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">بهترین قیمت</h3>
+                  <p className="text-gray-600 leading-relaxed">مقایسه قیمت‌ها و پیدا کردن بهترین معامله</p>
+                </div>
+              </div>
+
+              <div className="flex gap-6 p-6 rounded-2xl bg-white border-2 border-amber-100 hover:border-amber-400 hover:shadow-lg transition-all group">
+                <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="text-2xl">✅</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">تایید اصالت</h3>
+                  <p className="text-gray-600 leading-relaxed">تمام محصولات با گواهی اصالت تایید شده‌اند</p>
+                </div>
+              </div>
+
+              <div className="flex gap-6 p-6 rounded-2xl bg-white border-2 border-amber-100 hover:border-amber-400 hover:shadow-lg transition-all group">
+                <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="text-2xl">🚚</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">ارسال رایگان</h3>
+                  <p className="text-gray-600 leading-relaxed">ارسال سریع و رایگان برای خریدهای بالای ۵۰۰ هزار تومان</p>
+                </div>
+              </div>
+
+              <div className="flex gap-6 p-6 rounded-2xl bg-white border-2 border-amber-100 hover:border-amber-400 hover:shadow-lg transition-all group">
+                <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="text-2xl">💬</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">پشتیبانی ۲۴/۷</h3>
+                  <p className="text-gray-600 leading-relaxed">تیم پشتیبانی ما همیشه برای کمک حاضر است</p>
+                </div>
+              </div>
+
+              <div className="flex gap-6 p-6 rounded-2xl bg-white border-2 border-amber-100 hover:border-amber-400 hover:shadow-lg transition-all group">
+                <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="text-2xl">🏆</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">فروشندگان برتر</h3>
+                  <p className="text-gray-600 leading-relaxed">همکاری با بهترین و معتبرترین فروشندگان</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section - Call to Action */}
+        <section className="py-20 bg-gradient-to-r from-amber-600 via-amber-700 to-orange-700 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10 text-center">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+              آماده‌اید طلای خود را پیدا کنید؟
+            </h2>
+            <p className="text-xl text-amber-50 mb-10 max-w-2xl mx-auto leading-relaxed">
+              میلیون‌ها گزینه، هزاران فروشنده معتبر، و قیمت‌های بهترین همه در یک جا
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => window.location.href = '/products'}
+                className="bg-white hover:bg-gray-100 text-amber-700 px-8 py-4 rounded-full text-lg font-bold shadow-2xl transition-all hover:scale-105"
+              >
+                شروع جستجو
+              </Button>
+              <Button
+                onClick={() => window.location.href = '/blog'}
+                variant="outline"
+                className="bg-transparent hover:bg-white/20 text-white border-2 border-white/50 hover:border-white px-8 py-4 rounded-full text-lg font-semibold transition-all"
+              >
+                خواندن راهنماها
+              </Button>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       {/* Become Seller Dialog */}

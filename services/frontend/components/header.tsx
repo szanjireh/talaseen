@@ -45,6 +45,7 @@ export function Header() {
 
           {/* Top Nav Links */}
           <nav className="hidden md:flex items-center gap-6">
+            <Link href="/games" className="text-sm font-semibold text-gray-700 hover:text-amber-600 flex items-center gap-1">🎮 بازی‌ها</Link>
             <Link href="/blog" className="text-sm font-semibold text-gray-700 hover:text-amber-600">بلاگ</Link>
             <Link href="/about-us" className="text-sm font-semibold text-gray-700 hover:text-amber-600">درباره ما</Link>
             <Link href="/contact" className="text-sm font-semibold text-gray-700 hover:text-amber-600">تماس</Link>
