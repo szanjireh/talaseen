@@ -31,8 +31,8 @@ export default function BlogIndex() {
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4">بلاگ طلاسین</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">مقالات تخصصی، راهنماها و نکات کاربردی درباره خرید، نگهداری و سرمایه‌گذاری در طلا و جواهر.</p>
         <div className="mt-6">
-          <Button onClick={() => window.location.href = '/'} className="mr-3">بازگشت به صفحه اصلی</Button>
-          <Button onClick={() => window.location.href = '/contact'} variant="outline">تماس با ما</Button>
+          <a href="/" className="inline-block mr-3 bg-amber-500 hover:opacity-95 text-white px-4 py-2 rounded-md font-medium">بازگشت به صفحه اصلی</a>
+          <a href="/contact" className="inline-block border border-amber-500 text-amber-600 px-4 py-2 rounded-md font-medium">تماس با ما</a>
         </div>
       </section>
 

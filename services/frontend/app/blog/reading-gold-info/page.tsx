@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
 export default function Page() {
-  redirect('/blog/نحوه-اطلاعات-عیار')
+  redirect(encodeURI('/blog/نحوه-اطلاعات-عیار'))
 }
