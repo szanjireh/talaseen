@@ -158,7 +158,9 @@ export function SearchFilters({ onFilterChange, activeFilters }: SearchFiltersPr
               className="text-sm text-right border-2 border-amber-200 focus:border-amber-500 rounded-xl"
               step="0.5"
             />
-            <p className="text-xs text-gray-500 mt-2 text-right">نمایش محصولات با سود کمتر از این مقدار</p>
+            <p className="text-xs text-gray-500 mt-2 text-right">
+              نمایش محصولات با سود کمتر از این مقدار
+            </p>
           </div>
 
           {/* Max Making Fee - Premium */}
@@ -174,7 +176,9 @@ export function SearchFilters({ onFilterChange, activeFilters }: SearchFiltersPr
               onChange={(e) => handleFilterChange('maxMakingFee', e.target.value)}
               className="text-sm text-right border-2 border-amber-200 focus:border-amber-500 rounded-xl"
             />
-            <p className="text-xs text-gray-500 mt-2 text-right">نمایش محصولات با اجرت کمتر از این مقدار</p>
+            <p className="text-xs text-gray-500 mt-2 text-right">
+              نمایش محصولات با اجرت کمتر از این مقدار
+            </p>
           </div>
 
           {/* Apply Button - Premium */}

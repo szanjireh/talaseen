@@ -14,7 +14,10 @@ export default function UnauthorizedPage() {
       {/* Logo at top */}
       <div className="absolute top-0 left-0 right-0 p-6">
         <div className="container mx-auto">
-          <a href="/" className="inline-block text-3xl font-bold text-orange-600 hover:text-orange-700 transition-colors">
+          <a
+            href="/"
+            className="inline-block text-3xl font-bold text-orange-600 hover:text-orange-700 transition-colors"
+          >
             طلاسین
           </a>
         </div>
@@ -29,7 +32,7 @@ export default function UnauthorizedPage() {
           <p className="text-sm text-muted-foreground">
             نقش شما: <span className="font-semibold">{user?.role || 'نامشخص'}</span>
           </p>
-          
+
           {user?.role === 'USER' && (
             <p className="text-sm">
               شما می‌توانید درخواست فروشنده شدن را از پروفایل خود ارسال کنید
@@ -40,9 +43,7 @@ export default function UnauthorizedPage() {
             <Button onClick={() => router.push('/')} variant="outline">
               صفحه اصلی
             </Button>
-            <Button onClick={() => router.back()}>
-              بازگشت
-            </Button>
+            <Button onClick={() => router.back()}>بازگشت</Button>
           </div>
         </CardContent>
       </Card>

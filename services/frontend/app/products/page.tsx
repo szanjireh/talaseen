@@ -1,7 +1,5 @@
 'use client';
 
-import { Header } from '@/components/header';
-import { AnnouncementBar } from '@/components/announcement-bar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LikeButton } from '@/components/like-button';
@@ -39,7 +37,7 @@ function ProductsContent() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
+
   // Get type filter from URL
   const typeFilter = searchParams.get('type');
 
@@ -70,51 +68,60 @@ function ProductsContent() {
         params.type = typeFilter;
       }
       const response = await fetch(api.products.getAll(params));
-      const data = await response.json();
-      setProducts(data.products || []);
-      setTotalPages(data.pagination?.pages || 1);
+      if (response.ok) {
+        const data = await response.json();
+        const products = Array.isArray(data) ? data : data?.products || [];
+        setProducts(products);
+        setTotalPages(data?.pagination?.pages || 1);
+      } else {
+        setProducts([]);
+        setTotalPages(1);
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error);
+      setProducts([]);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-amber-50/20 to-white">
-      <Header />
-      <AnnouncementBar />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 text-right bg-white rounded-2xl p-6 shadow-lg border-2 border-amber-100">
-          <h1 className="text-4xl font-bold mb-2">
-            {typeFilter ? (
-              <span><span className="text-gold-gradient">{categoryNames[typeFilter] || typeFilter}</span></span>
-            ) : (
-              <span className="text-gray-900">تمام محصولات</span>
-            )}
-          </h1>
-          <p className="text-lg text-gray-600 mt-2">
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-600"></div>
-                در حال بارگذاری...
-              </span>
-            ) : (
-              <span className="text-amber-600 font-semibold">{products.length} محصول در این صفحه</span>
-            )}
-          </p>
-          {typeFilter && (
-            <Button
-              onClick={() => router.push('/products')}
-              variant="outline"
-              className="mt-4 border-2 border-amber-300 hover:border-amber-600 hover:bg-amber-50 font-semibold"
-            >
-              نمایش همه محصولات
-            </Button>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8 text-right bg-white rounded-2xl p-6 shadow-lg border-2 border-amber-100">
+        <h1 className="text-4xl font-bold mb-2">
+          {typeFilter ? (
+            <span>
+              <span className="text-gold-gradient">{categoryNames[typeFilter] || typeFilter}</span>
+            </span>
+          ) : (
+            <span className="text-gray-900">تمام محصولات</span>
           )}
-        </div>
+        </h1>
+        <p className="text-lg text-gray-600 mt-2">
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-600"></div>
+              در حال بارگذاری...
+            </span>
+          ) : (
+            <span className="text-amber-600 font-semibold">
+              {products.length} محصول در این صفحه
+            </span>
+          )}
+        </p>
+        {typeFilter && (
+          <Button
+            onClick={() => router.push('/products')}
+            variant="outline"
+            className="mt-4 border-2 border-amber-300 hover:border-amber-600 hover:bg-amber-50 font-semibold"
+          >
+            نمایش همه محصولات
+          </Button>
+        )}
+      </div>
 
+      <div>
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(12)].map((_, i) => (
@@ -147,52 +154,47 @@ function ProductsContent() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => {
-                const primaryImage = product.images?.find(img => img.isPrimary);
+                const primaryImage = product.images?.find((img) => img.isPrimary);
                 const imageUrl = primaryImage?.url || product.images?.[0]?.url;
-                
+
                 return (
                   <Link key={product.id} href={`/products/${product.id}`}>
                     <Card className="group cursor-pointer overflow-hidden border-2 border-amber-100 hover:border-amber-400 bg-white premium-card-hover shadow-md hover:shadow-2xl">
                       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-amber-50 to-white">
                         <img
-                          src={imageUrl ? getImageUrl(imageUrl) : 'https://placehold.co/400x400?text=No+Image'}
+                          src={
+                            imageUrl
+                              ? getImageUrl(imageUrl)
+                              : 'https://placehold.co/400x400?text=No+Image'
+                          }
                           alt={product.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
+
                         <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-amber-500/90 backdrop-blur-sm text-white text-xs font-bold shadow-lg">
                           {product.type}
                         </div>
                       </div>
-                      
+
                       <div className="p-5 space-y-3">
                         <h3 className="font-bold text-gray-900 line-clamp-2 min-h-[3.5rem] text-right text-lg group-hover:text-amber-700 transition-colors">
                           {product.title}
                         </h3>
-                        
+
                         <div className="space-y-2 text-sm bg-amber-50/50 rounded-xl p-3">
                           <div className="flex justify-between items-center">
                             <span className="font-bold text-gray-900">{product.weight} گرم</span>
                             <span className="text-gray-600 text-xs">وزن طلا</span>
                           </div>
-                          <div className="flex justify-between items-center">
-                            <span className="font-semibold text-amber-700" suppressHydrationWarning>
-                              {product.makingFee.toLocaleString('fa-IR')}%
-                            </span>
-                            <span className="text-gray-600 text-xs">اجرت ساخت</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="font-semibold text-green-600" suppressHydrationWarning>
-                              {product.profitPercent.toLocaleString('fa-IR')}%
-                            </span>
-                            <span className="text-gray-600 text-xs">سود فروشنده</span>
-                          </div>
                         </div>
 
                         <div className="pt-3 border-t-2 border-amber-200">
                           <div className="flex items-center justify-between">
-                            <p className="text-2xl font-extrabold text-gold-gradient" suppressHydrationWarning>
+                            <p
+                              className="text-2xl font-extrabold text-gold-gradient"
+                              suppressHydrationWarning
+                            >
                               {product.finalPrice.toLocaleString('fa-IR')}
                             </p>
                             <span className="text-gray-600 text-sm">تومان</span>
@@ -210,7 +212,7 @@ function ProductsContent() {
                         </div>
 
                         <div className="pt-2" onClick={(e) => e.preventDefault()}>
-                          <LikeButton 
+                          <LikeButton
                             productId={product.id}
                             initialLikesCount={product.likesCount}
                             initialIsLiked={product.isLiked}
@@ -228,7 +230,7 @@ function ProductsContent() {
             {totalPages > 1 && (
               <div className="mt-12 flex justify-center items-center gap-3 bg-white rounded-2xl p-6 shadow-lg border-2 border-amber-100">
                 <Button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className="bg-gold-gradient hover:opacity-90 text-gray-900 font-bold disabled:opacity-40"
                 >
@@ -236,11 +238,12 @@ function ProductsContent() {
                 </Button>
                 <div className="px-6 py-2 bg-amber-50 rounded-xl">
                   <span className="text-gray-900 font-bold">
-                    صفحه <span className="text-amber-600">{page.toLocaleString('fa-IR')}</span> از {totalPages.toLocaleString('fa-IR')}
+                    صفحه <span className="text-amber-600">{page.toLocaleString('fa-IR')}</span> از{' '}
+                    {totalPages.toLocaleString('fa-IR')}
                   </span>
                 </div>
                 <Button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                   className="bg-gold-gradient hover:opacity-90 text-gray-900 font-bold disabled:opacity-40"
                 >
@@ -257,17 +260,17 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-white">
-        <Header />
-        <AnnouncementBar />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+            </div>
           </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ProductsContent />
     </Suspense>
   );

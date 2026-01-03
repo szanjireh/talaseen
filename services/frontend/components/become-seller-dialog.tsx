@@ -21,7 +21,7 @@ export function BecomeSellerDialog({ isOpen, onClose }: BecomeSellerDialogProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!shopName.trim()) {
       setError('لطفا نام فروشگاه را وارد کنید');
       return;
@@ -40,7 +40,7 @@ export function BecomeSellerDialog({ isOpen, onClose }: BecomeSellerDialogProps)
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ shopName: shopName.trim() }),
       });
@@ -91,12 +91,8 @@ export function BecomeSellerDialog({ isOpen, onClose }: BecomeSellerDialogProps)
         {success ? (
           <div className="text-center py-8">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              درخواست شما ارسال شد!
-            </h3>
-            <p className="text-gray-600">
-              درخواست فروشندگی شما در انتظار تایید مدیر است
-            </p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">درخواست شما ارسال شد!</h3>
+            <p className="text-gray-600">درخواست فروشندگی شما در انتظار تایید مدیر است</p>
           </div>
         ) : (
           <>
@@ -104,9 +100,7 @@ export function BecomeSellerDialog({ isOpen, onClose }: BecomeSellerDialogProps)
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-100 mb-3">
                 <Store className="w-6 h-6 text-orange-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                درخواست فروشندگی
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">درخواست فروشندگی</h2>
               <p className="text-gray-600 text-sm">
                 با عضویت به عنوان فروشنده، محصولات طلای خود را به فروش برسانید
               </p>
@@ -114,7 +108,10 @@ export function BecomeSellerDialog({ isOpen, onClose }: BecomeSellerDialogProps)
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="shopName" className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                <label
+                  htmlFor="shopName"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                >
                   نام فروشگاه
                 </label>
                 <Input
@@ -158,7 +155,8 @@ export function BecomeSellerDialog({ isOpen, onClose }: BecomeSellerDialogProps)
 
             <div className="mt-4 p-3 bg-gray-50 rounded-md text-right">
               <p className="text-xs text-gray-600">
-                💡 پس از ارسال درخواست، مدیر سایت درخواست شما را بررسی و در صورت تایید، به شما اطلاع داده خواهد شد.
+                💡 پس از ارسال درخواست، مدیر سایت درخواست شما را بررسی و در صورت تایید، به شما اطلاع
+                داده خواهد شد.
               </p>
             </div>
           </>

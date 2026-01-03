@@ -127,7 +127,7 @@ export default function ProductDetailPage() {
                 className="w-full h-full object-cover"
               />
             </div>
-            
+
             {/* Thumbnail Gallery */}
             {product.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
@@ -156,9 +156,7 @@ export default function ProductDetailPage() {
           <div className="space-y-6">
             {/* Title & Price */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {product.title}
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.title}</h1>
               <div className="flex items-baseline gap-2">
                 <p className="text-4xl font-bold text-orange-600" suppressHydrationWarning>
                   {product.finalPrice.toLocaleString('fa-IR')} تومان
@@ -191,7 +189,7 @@ export default function ProductDetailPage() {
                     <Weight className="w-4 h-4" />
                   </div>
                 </div>
-                
+
                 {product.size && (
                   <div className="flex items-center justify-between py-2 border-b">
                     <span className="font-semibold">{product.size}</span>
@@ -205,7 +203,9 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b">
-                  <span className="font-semibold" suppressHydrationWarning>{product.makingFee.toLocaleString('fa-IR')}%</span>
+                  <span className="font-semibold" suppressHydrationWarning>
+                    {product.makingFee.toLocaleString('fa-IR')}%
+                  </span>
                   <div className="flex items-center gap-2 text-gray-600">
                     <span>درصد اجرت ساخت</span>
                     <Percent className="w-4 h-4" />
@@ -213,7 +213,9 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b">
-                  <span className="font-semibold text-green-600" suppressHydrationWarning>{product.profitPercent.toLocaleString('fa-IR')}%</span>
+                  <span className="font-semibold text-green-600" suppressHydrationWarning>
+                    {product.profitPercent.toLocaleString('fa-IR')}%
+                  </span>
                   <div className="flex items-center gap-2 text-gray-600">
                     <span>حاشیه سود</span>
                     <TrendingUp className="w-4 h-4" />
@@ -221,7 +223,9 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="flex items-center justify-between py-2">
-                  <span className="font-semibold" suppressHydrationWarning>{product.goldPriceAtCreation.toLocaleString('fa-IR')} تومان/گرم</span>
+                  <span className="font-semibold" suppressHydrationWarning>
+                    {product.goldPriceAtCreation.toLocaleString('fa-IR')} تومان/گرم
+                  </span>
                   <span className="text-gray-600">قیمت طلا (هنگام ثبت)</span>
                 </div>
               </div>
@@ -231,13 +235,15 @@ export default function ProductDetailPage() {
             {product.description && (
               <Card className="p-6">
                 <h3 className="font-semibold text-lg mb-3 text-right">توضیحات</h3>
-                <p className="text-gray-700 whitespace-pre-line text-right">{product.description}</p>
+                <p className="text-gray-700 whitespace-pre-line text-right">
+                  {product.description}
+                </p>
               </Card>
             )}
 
             {/* Like Button */}
             <div className="mb-4">
-              <LikeButton 
+              <LikeButton
                 productId={product.id}
                 initialLikesCount={product.likesCount}
                 initialIsLiked={product.isLiked}
@@ -255,7 +261,8 @@ export default function ProductDetailPage() {
             {/* Additional Info */}
             <Card className="p-4 bg-blue-50 border-blue-200">
               <p className="text-sm text-blue-900 text-right">
-                <strong>توجه:</strong> قیمت نهایی شامل هزینه طلا، اجرت ساخت و حاشیه سود می‌باشد. قیمت‌ها بر اساس نرخ فعلی بازار طلا ممکن است متغیر باشد.
+                <strong>توجه:</strong> قیمت نهایی شامل هزینه طلا، اجرت ساخت و حاشیه سود می‌باشد.
+                قیمت‌ها بر اساس نرخ فعلی بازار طلا ممکن است متغیر باشد.
               </p>
             </Card>
           </div>

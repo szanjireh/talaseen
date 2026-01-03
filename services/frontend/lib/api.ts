@@ -2,7 +2,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export const api = {
   baseURL: API_URL,
-  
+
   // Auth endpoints
   auth: {
     googleLogin: () => `${API_URL}/auth/google`,
@@ -13,7 +13,7 @@ export const api = {
     approveSeller: (id: string) => `${API_URL}/auth/admin/sellers/${id}/approve`,
     rejectSeller: (id: string) => `${API_URL}/auth/admin/sellers/${id}/reject`,
   },
-  
+
   // Product endpoints (gold products)
   products: {
     search: (query: string, params?: Record<string, string>) => {
@@ -31,6 +31,10 @@ export const api = {
     like: (id: string) => `${API_URL}/products/${id}/like`,
     unlike: (id: string) => `${API_URL}/products/${id}/like`,
     getLikes: (id: string) => `${API_URL}/products/${id}/likes`,
+    getMyLiked: (params?: Record<string, string>) => {
+      const query = params ? `?${new URLSearchParams(params)}` : '';
+      return `${API_URL}/products/liked/my-liked${query}`;
+    },
   },
 
   // Upload endpoints

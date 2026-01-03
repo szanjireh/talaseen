@@ -36,12 +36,12 @@ export function AnnouncementBar() {
       // Add 5-second timeout to prevent hanging
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
+
       const response = await fetch(api.announcements.getActive(), {
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
-      
+
       if (response.ok) {
         const data = await response.json();
         setAnnouncements(data);

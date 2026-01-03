@@ -53,7 +53,7 @@ export interface ProductImage {
   createdAt: string;
 }
 
-export type GoldProductType = 
+export type GoldProductType =
   | 'RING'
   | 'BRACELET'
   | 'NECKLACE'

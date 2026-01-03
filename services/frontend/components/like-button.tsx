@@ -12,11 +12,11 @@ interface LikeButtonProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export function LikeButton({ 
-  productId, 
-  initialLikesCount = 0, 
+export function LikeButton({
+  productId,
+  initialLikesCount = 0,
   initialIsLiked = false,
-  size = 'md'
+  size = 'md',
 }: LikeButtonProps) {
   const { isAuthenticated, token } = useAuth();
   const [likesCount, setLikesCount] = useState(initialLikesCount);
@@ -57,7 +57,7 @@ export function LikeButton({
         const response = await fetch(api.products.unlike(productId), {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -71,7 +71,7 @@ export function LikeButton({
         const response = await fetch(api.products.like(productId), {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -107,18 +107,17 @@ export function LikeButton({
       className={`
         inline-flex items-center justify-center gap-1.5 px-3 py-1.5
         rounded-lg
-        ${isLiked 
-          ? 'bg-red-50 border-2 border-red-500 text-red-600' 
-          : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-500 hover:bg-red-50'
+        ${
+          isLiked
+            ? 'bg-red-50 border-2 border-red-500 text-red-600'
+            : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-500 hover:bg-red-50'
         }
         transition-all duration-200
         ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}
       `}
       title={isLiked ? 'برداشتن لایک' : 'لایک کردن'}
     >
-      <Heart
-        className={`w-4 h-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
-      />
+      <Heart className={`w-4 h-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
       <span className="font-semibold text-sm">
         {likesCount > 0 ? likesCount.toLocaleString('fa-IR') : '۰'}
       </span>

@@ -65,9 +65,12 @@ export default function GamesPage() {
       .map(() => {
         const rand = Math.random();
         let type: 'gem' | 'bomb' | 'bonus' | 'sparkle';
-        if (rand < 0.25) type = 'gem'; // 25% gems
-        else if (rand < 0.45) type = 'bomb'; // 20% bombs
-        else if (rand < 0.65) type = 'bonus'; // 20% bonus
+        if (rand < 0.25)
+          type = 'gem'; // 25% gems
+        else if (rand < 0.45)
+          type = 'bomb'; // 20% bombs
+        else if (rand < 0.65)
+          type = 'bonus'; // 20% bonus
         else type = 'sparkle'; // 35% sparkle
 
         return {
@@ -165,10 +168,10 @@ export default function GamesPage() {
   };
 
   const countRevealedGems = () => {
-    return cells.filter(c => c.revealed && c.type === 'gem').length;
+    return cells.filter((c) => c.revealed && c.type === 'gem').length;
   };
 
-  const totalGems = cells.filter(c => c.type === 'gem').length;
+  const totalGems = cells.filter((c) => c.type === 'gem').length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-amber-50">
@@ -189,7 +192,9 @@ export default function GamesPage() {
           <div className="bg-white rounded-3xl shadow-xl border-2 border-purple-200 p-8">
             <div className="text-center mb-6">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">💎 جمع‌آوری جواهر</h2>
-              <p className="text-gray-600">روی خانه‌های پنهان کلیک کنید تا محتوای آن‌ها را کشف کنید. از بمب‌ها احتیاط کنید!</p>
+              <p className="text-gray-600">
+                روی خانه‌های پنهان کلیک کنید تا محتوای آن‌ها را کشف کنید. از بمب‌ها احتیاط کنید!
+              </p>
             </div>
 
             {!gameStarted ? (
@@ -207,11 +212,16 @@ export default function GamesPage() {
                 <div className="text-6xl animate-bounce">
                   {gems > 200 ? '🎉' : gems > 100 ? '😄' : '😊'}
                 </div>
-                
+
                 <div className="space-y-2">
                   <p className="text-2xl font-bold text-gray-900">بازی تمام شد!</p>
-                  <p className="text-gray-600">امتیاز شما: <span className="font-bold text-purple-600">{score}</span></p>
-                  <p className="text-gray-600">جواهر جمع‌آوری شده: <span className="font-bold text-blue-600">{gems}</span> / {totalGems}</p>
+                  <p className="text-gray-600">
+                    امتیاز شما: <span className="font-bold text-purple-600">{score}</span>
+                  </p>
+                  <p className="text-gray-600">
+                    جواهر جمع‌آوری شده: <span className="font-bold text-blue-600">{gems}</span> /{' '}
+                    {totalGems}
+                  </p>
                 </div>
 
                 {discountCode ? (
@@ -219,8 +229,12 @@ export default function GamesPage() {
                     <p className="text-gray-700 mb-3">🎁 شما برنده شده‌اید!</p>
                     <div className="bg-white rounded-xl p-4 border-2 border-dashed border-green-400 mb-3">
                       <p className="text-sm text-gray-600 mb-1">کد تخفیف:</p>
-                      <p className="text-3xl font-black text-green-600 font-mono mb-2">{discountCode}</p>
-                      <p className="text-sm text-gray-600">تخفیف: <span className="font-bold text-green-600">{discountPercent}%</span></p>
+                      <p className="text-3xl font-black text-green-600 font-mono mb-2">
+                        {discountCode}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        تخفیف: <span className="font-bold text-green-600">{discountPercent}%</span>
+                      </p>
                     </div>
                     <p className="text-sm text-gray-600 mb-4">این کد را در صفحه خرید وارد کنید</p>
                     <Button
@@ -232,7 +246,9 @@ export default function GamesPage() {
                   </div>
                 ) : (
                   <div className="bg-red-50 rounded-2xl p-4 border-2 border-red-200">
-                    <p className="text-red-700 font-semibold">درایت بیشتری برای برنده شدن! حداقل ۱۰۰ امتیاز لازم است.</p>
+                    <p className="text-red-700 font-semibold">
+                      درایت بیشتری برای برنده شدن! حداقل ۱۰۰ امتیاز لازم است.
+                    </p>
                   </div>
                 )}
 
@@ -249,7 +265,9 @@ export default function GamesPage() {
                 <div className="grid grid-cols-4 gap-4 mb-6">
                   <div className="bg-blue-50 rounded-xl p-4 text-center border-2 border-blue-200">
                     <p className="text-xs text-gray-600 mb-1">جواهر</p>
-                    <p className="text-2xl font-bold text-blue-600">💎 {gems}/{totalGems}</p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      💎 {gems}/{totalGems}
+                    </p>
                   </div>
                   <div className="bg-red-50 rounded-xl p-4 text-center border-2 border-red-200">
                     <p className="text-xs text-gray-600 mb-1">جان</p>
@@ -267,13 +285,16 @@ export default function GamesPage() {
 
                 {/* Game Grid */}
                 <div className="bg-gradient-to-br from-gray-200 to-gray-300 p-6 rounded-2xl border-4 border-gray-400 overflow-x-auto">
-                  <div className="inline-block" style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
-                    gap: '6px',
-                    width: 'fit-content',
-                    margin: '0 auto'
-                  }}>
+                  <div
+                    className="inline-block"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
+                      gap: '6px',
+                      width: 'fit-content',
+                      margin: '0 auto',
+                    }}
+                  >
                     {cells.map((cell, index) => (
                       <button
                         key={index}
@@ -332,4 +353,3 @@ export default function GamesPage() {
     </div>
   );
 }
-

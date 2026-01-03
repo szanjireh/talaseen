@@ -32,7 +32,10 @@ function DashboardContent() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sellerStatus, setSellerStatus] = useState<{ isApproved: boolean; shopName: string } | null>(null);
+  const [sellerStatus, setSellerStatus] = useState<{
+    isApproved: boolean;
+    shopName: string;
+  } | null>(null);
 
   // Fetch seller status on mount
   useEffect(() => {
@@ -47,7 +50,7 @@ function DashboardContent() {
             isApproved: seller?.isApproved || false,
             shopName: seller?.shopName || user?.shopName || '',
           });
-          
+
           // Update user in auth context if needed
           if (seller && user) {
             login(token!, {
@@ -138,13 +141,14 @@ function DashboardContent() {
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <a href="/" className="text-2xl font-bold text-orange-600 hover:text-orange-700 transition-colors">
+            <a
+              href="/"
+              className="text-2xl font-bold text-orange-600 hover:text-orange-700 transition-colors"
+            >
               طلاسین
             </a>
             <span className="text-gray-400">|</span>
-            <h1 className="text-xl font-semibold text-gray-700">
-              پنل فروشنده
-            </h1>
+            <h1 className="text-xl font-semibold text-gray-700">پنل فروشنده</h1>
           </div>
           <Button onClick={handleLogout} variant="outline">
             خروج
@@ -156,7 +160,8 @@ function DashboardContent() {
         <div className="mb-6">
           <h2 className="text-3xl font-bold mb-2">خوش آمدید، {user?.name}!</h2>
           <p className="text-muted-foreground">
-            مدیریت فروشگاه: <span className="font-semibold">{sellerStatus?.shopName || user?.shopName}</span>
+            مدیریت فروشگاه:{' '}
+            <span className="font-semibold">{sellerStatus?.shopName || user?.shopName}</span>
           </p>
         </div>
 
@@ -165,7 +170,8 @@ function DashboardContent() {
           <Card className="mb-6 border-yellow-300 bg-yellow-50">
             <CardContent className="py-4">
               <p className="text-yellow-800 font-semibold">
-                ⏳ حساب فروشنده شما در انتظار تایید ادمین است. پس از تایید می‌توانید محصول اضافه کنید.
+                ⏳ حساب فروشنده شما در انتظار تایید ادمین است. پس از تایید می‌توانید محصول اضافه
+                کنید.
               </p>
             </CardContent>
           </Card>
@@ -204,7 +210,9 @@ function DashboardContent() {
               <CardDescription>تایید حساب</CardDescription>
             </CardHeader>
             <CardContent>
-              <span className={`text-lg font-semibold ${(sellerStatus?.isApproved ?? user?.isApproved) ? 'text-green-600' : 'text-yellow-600'}`}>
+              <span
+                className={`text-lg font-semibold ${(sellerStatus?.isApproved ?? user?.isApproved) ? 'text-green-600' : 'text-yellow-600'}`}
+              >
                 {(sellerStatus?.isApproved ?? user?.isApproved) ? '✅ تایید شده' : '⏳ در انتظار'}
               </span>
             </CardContent>
@@ -251,9 +259,7 @@ function DashboardContent() {
           <Card>
             <CardHeader>
               <CardTitle>محصولات شما</CardTitle>
-              <CardDescription>
-                {products.length} محصول ثبت شده
-              </CardDescription>
+              <CardDescription>{products.length} محصول ثبت شده</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -279,7 +285,11 @@ function DashboardContent() {
                     >
                       <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                         <img
-                          src={getImageUrl(product.images.find((img) => img.isPrimary)?.url || product.images[0]?.url || '')}
+                          src={getImageUrl(
+                            product.images.find((img) => img.isPrimary)?.url ||
+                              product.images[0]?.url ||
+                              ''
+                          )}
                           alt={product.title}
                           className="w-full h-full object-cover"
                         />

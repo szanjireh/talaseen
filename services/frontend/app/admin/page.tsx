@@ -31,8 +31,10 @@ function AdminContent() {
   const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'PENDING' | 'ALL'>('PENDING');
-  const [activeTab, setActiveTab] = useState<'sellers' | 'announcements' | 'products' | 'users' | 'admins' | 'approved-sellers'>('sellers');
-  
+  const [activeTab, setActiveTab] = useState<
+    'sellers' | 'announcements' | 'products' | 'users' | 'admins' | 'approved-sellers'
+  >('sellers');
+
   // Announcement form
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
   const [announcementTitle, setAnnouncementTitle] = useState('');
@@ -187,7 +189,11 @@ function AdminContent() {
   };
 
   const handleReject = async (sellerId: string) => {
-    if (!confirm('Are you sure you want to reject this seller? This will delete their seller profile.')) {
+    if (
+      !confirm(
+        'Are you sure you want to reject this seller? This will delete their seller profile.'
+      )
+    ) {
       return;
     }
     try {
@@ -324,17 +330,21 @@ function AdminContent() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-b from-orange-50 to-white dark:from-slate-950 dark:to-slate-900 font-vazirmatn">
+    <div
+      dir="rtl"
+      className="min-h-screen bg-gradient-to-b from-orange-50 to-white dark:from-slate-950 dark:to-slate-900 font-vazirmatn"
+    >
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <a href="/" className="text-2xl font-bold text-orange-600 hover:text-orange-700 transition-colors">
+            <a
+              href="/"
+              className="text-2xl font-bold text-orange-600 hover:text-orange-700 transition-colors"
+            >
               طلاسین
             </a>
             <span className="text-gray-400">|</span>
-            <h1 className="text-xl font-semibold text-gray-700">
-              پنل مدیریت
-            </h1>
+            <h1 className="text-xl font-semibold text-gray-700">پنل مدیریت</h1>
           </div>
           <div className="flex items-center gap-2">
             <Button onClick={handleLogout} variant="outline">
@@ -458,10 +468,7 @@ function AdminContent() {
                           >
                             تایید
                           </Button>
-                          <Button
-                            onClick={() => handleReject(seller.id)}
-                            variant="destructive"
-                          >
+                          <Button onClick={() => handleReject(seller.id)} variant="destructive">
                             رد کردن
                           </Button>
                         </div>
@@ -497,7 +504,9 @@ function AdminContent() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">اولویت (عدد بزرگتر بالاتر نمایش داده می‌شود)</label>
+                    <label className="text-sm font-medium">
+                      اولویت (عدد بزرگتر بالاتر نمایش داده می‌شود)
+                    </label>
                     <Input
                       type="number"
                       value={announcementPriority}
@@ -547,7 +556,9 @@ function AdminContent() {
                     </CardHeader>
                     <CardContent className="flex gap-2">
                       <Button
-                        onClick={() => handleToggleAnnouncement(announcement.id, announcement.isActive)}
+                        onClick={() =>
+                          handleToggleAnnouncement(announcement.id, announcement.isActive)
+                        }
                         variant="outline"
                         size="sm"
                       >
@@ -593,7 +604,11 @@ function AdminContent() {
                         {/* Product Image */}
                         <div className="w-24 h-24 flex-shrink-0">
                           <img
-                            src={product.images?.[0]?.url ? getImageUrl(product.images[0].url) : 'https://placehold.co/96x96?text=No+Image'}
+                            src={
+                              product.images?.[0]?.url
+                                ? getImageUrl(product.images[0].url)
+                                : 'https://placehold.co/96x96?text=No+Image'
+                            }
                             alt={product.title}
                             className="w-full h-full object-cover rounded-md"
                           />
@@ -601,30 +616,39 @@ function AdminContent() {
 
                         {/* Product Details */}
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-lg mb-1 truncate text-right">{product.title}</h4>
+                          <h4 className="font-semibold text-lg mb-1 truncate text-right">
+                            {product.title}
+                          </h4>
                           <p className="text-sm text-muted-foreground mb-2 line-clamp-1 text-right">
                             {product.description}
                           </p>
                           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                             <div>
                               <span className="text-muted-foreground">فروشنده:</span>{' '}
-                              <span className="font-medium">{product.seller?.shopName || 'N/A'}</span>
+                              <span className="font-medium">
+                                {product.seller?.shopName || 'N/A'}
+                              </span>
                             </div>
                             <div>
                               <span className="text-muted-foreground">قیمت:</span>{' '}
-                              <span className="font-medium">{product.finalPrice.toLocaleString('fa-IR')} تومان</span>
+                              <span className="font-medium">
+                                {product.finalPrice.toLocaleString('fa-IR')} تومان
+                              </span>
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Weight:</span> {product.weight}g
+                              <span className="text-muted-foreground">Weight:</span>{' '}
+                              {product.weight}g
                             </div>
                             <div>
                               <span className="text-muted-foreground">Type:</span> {product.type}
                             </div>
                             <div>
-                              <span className="text-muted-foreground">درصد اجرت:</span> {product.makingFee}%
+                              <span className="text-muted-foreground">درصد اجرت:</span>{' '}
+                              {product.makingFee}%
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Profit:</span> {product.profitPercent}%
+                              <span className="text-muted-foreground">Profit:</span>{' '}
+                              {product.profitPercent}%
                             </div>
                           </div>
                           <div className="text-xs text-muted-foreground mt-2">
@@ -681,13 +705,20 @@ function AdminContent() {
                     <CardHeader>
                       <div className="flex items-center gap-3">
                         <img
-                          src={user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name)}
+                          src={
+                            user.avatar ||
+                            'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name)
+                          }
                           alt={user.name}
                           className="w-12 h-12 rounded-full"
                         />
                         <div className="flex-1 min-w-0">
-                          <CardTitle className="text-base truncate text-right">{user.name}</CardTitle>
-                          <CardDescription className="text-sm truncate text-right">{user.email}</CardDescription>
+                          <CardTitle className="text-base truncate text-right">
+                            {user.name}
+                          </CardTitle>
+                          <CardDescription className="text-sm truncate text-right">
+                            {user.email}
+                          </CardDescription>
                         </div>
                       </div>
                     </CardHeader>
@@ -740,13 +771,20 @@ function AdminContent() {
                     <CardHeader>
                       <div className="flex items-center gap-3">
                         <img
-                          src={admin.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(admin.name)}
+                          src={
+                            admin.avatar ||
+                            'https://ui-avatars.com/api/?name=' + encodeURIComponent(admin.name)
+                          }
                           alt={admin.name}
                           className="w-12 h-12 rounded-full"
                         />
                         <div className="flex-1 min-w-0">
-                          <CardTitle className="text-base truncate text-right">{admin.name}</CardTitle>
-                          <CardDescription className="text-sm truncate text-right">{admin.email}</CardDescription>
+                          <CardTitle className="text-base truncate text-right">
+                            {admin.name}
+                          </CardTitle>
+                          <CardDescription className="text-sm truncate text-right">
+                            {admin.email}
+                          </CardDescription>
                         </div>
                       </div>
                     </CardHeader>
@@ -789,12 +827,18 @@ function AdminContent() {
                     <CardHeader>
                       <div className="flex items-center gap-3">
                         <img
-                          src={seller.user?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(seller.shopName)}
+                          src={
+                            seller.user?.avatar ||
+                            'https://ui-avatars.com/api/?name=' +
+                              encodeURIComponent(seller.shopName)
+                          }
                           alt={seller.shopName}
                           className="w-12 h-12 rounded-full"
                         />
                         <div className="flex-1 min-w-0">
-                          <CardTitle className="text-base truncate text-right">{seller.shopName}</CardTitle>
+                          <CardTitle className="text-base truncate text-right">
+                            {seller.shopName}
+                          </CardTitle>
                           <CardDescription className="text-sm truncate text-right">
                             {seller.user?.name} ({seller.user?.email})
                           </CardDescription>

@@ -206,9 +206,7 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
         <CardContent className="space-y-6">
           {/* Product Images */}
           <div>
-            <label className="text-sm font-medium mb-2 block">
-              تصاویر محصول (حداکثر 5) *
-            </label>
+            <label className="text-sm font-medium mb-2 block">تصاویر محصول (حداکثر 5) *</label>
             <div className="grid grid-cols-5 gap-4 mb-4">
               {imagePreviews.map((preview, index) => (
                 <div key={index} className="relative aspect-square">
@@ -372,27 +370,49 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
                   <h4 className="font-semibold mb-2">جزئیات قیمت:</h4>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span>هزینه طلا ({formData.weight}گرم × ${formData.goldPriceAtCreation}):</span>
+                      <span>
+                        هزینه طلا ({formData.weight}گرم × ${formData.goldPriceAtCreation}):
+                      </span>
                       <span className="font-medium">
-                        ${((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)).toFixed(2)}
+                        $
+                        {(
+                          (parseFloat(formData.weight) || 0) *
+                          (parseFloat(formData.goldPriceAtCreation) || 0)
+                        ).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>اجرت ساخت ({formData.makingFee}%):</span>
                       <span className="font-medium">
-                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) * ((parseFloat(formData.makingFee) || 0) / 100)).toFixed(2)}
+                        $
+                        {(
+                          (parseFloat(formData.weight) || 0) *
+                          (parseFloat(formData.goldPriceAtCreation) || 0) *
+                          ((parseFloat(formData.makingFee) || 0) / 100)
+                        ).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>جمع جزء:</span>
                       <span className="font-medium">
-                        ${(((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) * (1 + (parseFloat(formData.makingFee) || 0) / 100)).toFixed(2)}
+                        $
+                        {(
+                          (parseFloat(formData.weight) || 0) *
+                          (parseFloat(formData.goldPriceAtCreation) || 0) *
+                          (1 + (parseFloat(formData.makingFee) || 0) / 100)
+                        ).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>سود ({formData.profitPercent}%):</span>
                       <span className="font-medium text-green-600">
-                        +${((calculatedPrice - (((parseFloat(formData.weight) || 0) * (parseFloat(formData.goldPriceAtCreation) || 0)) + (parseFloat(formData.makingFee) || 0)))).toFixed(2)}
+                        +$
+                        {(
+                          calculatedPrice -
+                          ((parseFloat(formData.weight) || 0) *
+                            (parseFloat(formData.goldPriceAtCreation) || 0) +
+                            (parseFloat(formData.makingFee) || 0))
+                        ).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between pt-2 border-t-2 border-blue-300 mt-2">

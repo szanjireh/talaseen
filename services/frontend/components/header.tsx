@@ -3,7 +3,16 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/lib/auth-context';
-import { Search, LogOut, User, Settings, Heart, ShoppingBag, LayoutDashboard, ChevronDown } from 'lucide-react';
+import {
+  Search,
+  LogOut,
+  User,
+  Settings,
+  Heart,
+  ShoppingBag,
+  LayoutDashboard,
+  ChevronDown,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -45,17 +54,31 @@ export function Header() {
 
           {/* Top Nav Links */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/games" className="text-sm font-semibold text-gray-700 hover:text-amber-600 flex items-center gap-1">🎮 بازی‌ها</Link>
-            <Link href="/blog" className="text-sm font-semibold text-gray-700 hover:text-amber-600">بلاگ</Link>
-            <Link href="/about-us" className="text-sm font-semibold text-gray-700 hover:text-amber-600">درباره ما</Link>
-            <Link href="/contact" className="text-sm font-semibold text-gray-700 hover:text-amber-600">تماس</Link>
+            <Link
+              href="/games"
+              className="text-sm font-semibold text-gray-700 hover:text-amber-600 flex items-center gap-1"
+            >
+              🎮 بازی‌ها
+            </Link>
+            <Link href="/blog" className="text-sm font-semibold text-gray-700 hover:text-amber-600">
+              بلاگ
+            </Link>
+            <Link
+              href="/about-us"
+              className="text-sm font-semibold text-gray-700 hover:text-amber-600"
+            >
+              درباره ما
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-semibold text-gray-700 hover:text-amber-600"
+            >
+              تماس
+            </Link>
           </nav>
 
           {/* Search Bar - Enhanced */}
-          <form 
-            onSubmit={handleSearch}
-            className="hidden md:flex flex-1 max-w-2xl mx-8"
-          >
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-8">
             <div className="relative w-full group">
               <Input
                 type="text"
@@ -87,7 +110,7 @@ export function Header() {
                     👑 پنل مدیر
                   </Button>
                 )}
-                
+
                 {(user?.role === 'SELLER' || (user?.role === 'ADMIN' && user?.shopName)) && (
                   <Button
                     variant="outline"
@@ -97,7 +120,7 @@ export function Header() {
                     🏪 پنل فروشنده
                   </Button>
                 )}
-                
+
                 {/* User Menu - Enhanced */}
                 <div className="relative">
                   <button
@@ -105,9 +128,9 @@ export function Header() {
                     className="flex items-center gap-3 px-4 py-2 rounded-2xl hover:bg-amber-50 transition-all border-2 border-transparent hover:border-amber-300 shadow-sm hover:shadow-md"
                   >
                     {user?.avatar ? (
-                      <img 
-                        src={user.avatar} 
-                        alt={user.name || 'User'} 
+                      <img
+                        src={user.avatar}
+                        alt={user.name || 'User'}
                         className="w-11 h-11 rounded-full ring-2 ring-amber-300 object-cover"
                       />
                     ) : (
@@ -120,7 +143,11 @@ export function Header() {
                         {user?.name?.split(' ')[0] || 'کاربر'}
                       </span>
                       <span className="text-xs text-gray-500 leading-tight">
-                        {user?.role === 'ADMIN' ? 'مدیر' : user?.role === 'SELLER' ? 'فروشنده' : 'کاربر'}
+                        {user?.role === 'ADMIN'
+                          ? 'مدیر'
+                          : user?.role === 'SELLER'
+                            ? 'فروشنده'
+                            : 'کاربر'}
                       </span>
                     </div>
                     <ChevronDown className="hidden sm:block w-4 h-4 text-gray-400" />
@@ -129,18 +156,15 @@ export function Header() {
                   {/* Dropdown Menu */}
                   {showUserMenu && (
                     <>
-                      <div 
-                        className="fixed inset-0 z-10" 
-                        onClick={() => setShowUserMenu(false)}
-                      />
+                      <div className="fixed inset-0 z-10" onClick={() => setShowUserMenu(false)} />
                       <div className="absolute left-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-20">
                         {/* User Info Header */}
                         <div className="px-4 py-4 bg-gradient-to-r from-orange-50 to-orange-100 border-b border-orange-200">
                           <div className="flex items-center gap-3">
                             {user?.avatar ? (
-                              <img 
-                                src={user.avatar} 
-                                alt={user.name || 'User'} 
+                              <img
+                                src={user.avatar}
+                                alt={user.name || 'User'}
                                 className="w-14 h-14 rounded-full ring-3 ring-white shadow-md object-cover"
                               />
                             ) : (
@@ -157,7 +181,11 @@ export function Header() {
                               </p>
                               <div className="mt-1.5">
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white shadow-sm">
-                                  {user?.role === 'ADMIN' ? '👑 مدیر' : user?.role === 'SELLER' ? '🏪 فروشنده' : '👤 کاربر'}
+                                  {user?.role === 'ADMIN'
+                                    ? '👑 مدیر'
+                                    : user?.role === 'SELLER'
+                                      ? '🏪 فروشنده'
+                                      : '👤 کاربر'}
                                 </span>
                               </div>
                             </div>
@@ -183,8 +211,9 @@ export function Header() {
                               </div>
                             </button>
                           )}
-                          
-                          {(user?.role === 'SELLER' || (user?.role === 'ADMIN' && user?.shopName)) && (
+
+                          {(user?.role === 'SELLER' ||
+                            (user?.role === 'ADMIN' && user?.shopName)) && (
                             <button
                               onClick={() => {
                                 router.push('/dashboard');
@@ -201,7 +230,7 @@ export function Header() {
                               </div>
                             </button>
                           )}
-                          
+
                           <button
                             onClick={() => {
                               router.push('/favorites');
@@ -277,15 +306,6 @@ export function Header() {
                   <span className="text-lg">🔓</span>
                   <span>ورود</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
-                </Button>
-                
-                <Button
-                  onClick={() => router.push('/login')}
-                  className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:via-orange-600 hover:to-amber-700 text-white font-bold shadow-lg shadow-amber-500/40 px-6 py-2 rounded-xl transition-all hover:shadow-xl hover:shadow-amber-500/60 hover:scale-105"
-                >
-                  <span className="text-xl">🏪</span>
-                  <span>فروش در طلاسین</span>
-                  <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 blur opacity-30 group-hover:opacity-50 transition-opacity -z-10"></div>
                 </Button>
               </>
             )}

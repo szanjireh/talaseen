@@ -88,6 +88,12 @@ export class ProductsController {
     return this.productsService.findBySeller(seller.id);
   }
 
+  @Get('liked/my-liked')
+  @UseGuards(AuthGuard('jwt'))
+  async getMyLikedProducts(@Req() req, @Query() query: any) {
+    return this.productsService.getUserLikedProducts(req.user.id, query);
+  }
+
   @Post(':id/like')
   @UseGuards(AuthGuard('jwt'))
   async likeProduct(@Param('id') productId: string, @Req() req) {

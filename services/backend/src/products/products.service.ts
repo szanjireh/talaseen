@@ -348,4 +348,45 @@ export class ProductsService {
     });
     return { productId, likesCount: product?.likesCount || 0 };
   }
+
+  async getUserLikedProducts(userId: string, filters?: any) {
+    const { page = 1, limit = 24 } = filters || {};
+    const parsedPage = parseInt(page as string) || 1;
+    const parsedLimit = parseInt(limit as string) || 24;
+
+    const [products, total] = await Promise.all([
+      this.prisma.like.findMany({
+        where: { userId },
+        include: {
+          product: {
+            include: {
+              images: { orderBy: { isPrimary: 'desc' } },
+              seller: {
+                include: {
+                  user: { select: { id: true, name: true, email: true, avatar: true } }
+                }
+              }
+            }
+          }
+        },
+        skip: (parsedPage - 1) * parsedLimit,
+        take: parsedLimit,
+        orderBy: { createdAt: 'desc' }
+      }),
+      this.prisma.like.count({ where: { userId } })
+    ]);
+
+    return {
+      products: products.map(like => ({
+        ...like.product,
+        isLiked: true
+      })),
+      pagination: {
+        page: parsedPage,
+        limit: parsedLimit,
+        total,
+        pages: Math.ceil(total / parsedLimit)
+      }
+    };
+  }
 }
