@@ -35,30 +35,50 @@ interface Product {
 function FavoritesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { token } = useAuth();
+  const { token, isAuthenticated } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetchLikedProducts();
-  }, [page, token]);
+    if (isAuthenticated) {
+      fetchLikedProducts();
+    } else {
+      setLoading(false);
+    }
+  }, [page, token, isAuthenticated]);
 
   const fetchLikedProducts = async () => {
-    if (!token) return;
+    if (!token) {
+      console.log('No token available for fetching liked products');
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
-      const response = await fetch(api.products.getMyLiked({ page: String(page), limit: '12' }), {
+      console.log('Fetching liked products with token:', token ? 'token exists' : 'no token');
+      const url = api.products.getMyLiked({ page: String(page), limit: '12' });
+      console.log('Fetching from URL:', url);
+
+      const response = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      console.log('Response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('Received data:', data);
         const likedProducts = Array.isArray(data) ? data : data?.products || [];
+        console.log('Liked products count:', likedProducts.length);
         setProducts(likedProducts);
         setTotalPages(data?.pagination?.pages || 1);
       } else {
+        console.error('Failed to fetch liked products, status:', response.status);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
         setProducts([]);
       }
     } catch (error) {
@@ -144,13 +164,20 @@ function FavoritesContent() {
                         {/* Like Button Overlay */}
                         <div
                           className="absolute top-3 left-3 z-10"
-                          onClick={(e) => e.preventDefault()}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
                         >
                           <LikeButton
                             productId={product.id}
                             initialLikesCount={product.likesCount || 0}
-                            initialIsLiked={product.isLiked || true}
+                            initialIsLiked={true}
                             size="md"
+                            onLikeChange={() => {
+                              // Refresh the list when a product is unliked
+                              fetchLikedProducts();
+                            }}
                           />
                         </div>
                       </div>

@@ -10,6 +10,7 @@ interface LikeButtonProps {
   initialLikesCount?: number;
   initialIsLiked?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  onLikeChange?: () => void;
 }
 
 export function LikeButton({
@@ -17,6 +18,7 @@ export function LikeButton({
   initialLikesCount = 0,
   initialIsLiked = false,
   size = 'md',
+  onLikeChange,
 }: LikeButtonProps) {
   const { isAuthenticated, token } = useAuth();
   const [likesCount, setLikesCount] = useState(initialLikesCount);
@@ -65,6 +67,7 @@ export function LikeButton({
           const data = await response.json();
           setIsLiked(false);
           setLikesCount(data.likesCount);
+          onLikeChange?.();
         }
       } else {
         // Like
@@ -79,6 +82,7 @@ export function LikeButton({
           const data = await response.json();
           setIsLiked(true);
           setLikesCount(data.likesCount);
+          onLikeChange?.();
         }
       }
     } catch (error) {
@@ -91,13 +95,19 @@ export function LikeButton({
   const sizeClasses = {
     sm: 'w-6 h-6 text-xs',
     md: 'w-8 h-8 text-sm',
-    lg: 'w-10 h-10 text-base',
+    lg: 'w-12 h-12 text-base',
   };
 
   const iconSizes = {
     sm: 'w-3 h-3',
     md: 'w-4 h-4',
-    lg: 'w-5 h-5',
+    lg: 'w-6 h-6',
+  };
+
+  const buttonPadding = {
+    sm: 'px-2 py-1',
+    md: 'px-3 py-1.5',
+    lg: 'px-6 py-5',
   };
 
   return (
@@ -105,23 +115,43 @@ export function LikeButton({
       onClick={handleLike}
       disabled={isLoading}
       className={`
-        inline-flex items-center justify-center gap-1.5 px-3 py-1.5
+        inline-flex items-center justify-center gap-2
         rounded-lg
+        ${buttonPadding[size]}
         ${
           isLiked
-            ? 'bg-red-50 border-2 border-red-500 text-red-600'
-            : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-500 hover:bg-red-50'
+            ? 'bg-red-500 border-2 border-red-600 text-white shadow-lg'
+            : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-red-400 hover:bg-red-50'
         }
         transition-all duration-200
-        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}
+        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md hover:scale-105'}
+        ${size === 'lg' ? 'min-w-[140px]' : ''}
       `}
-      title={isLiked ? 'برداشتن لایک' : 'لایک کردن'}
+      title={isLiked ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
     >
-      <Heart className={`w-4 h-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
-      <span className="font-semibold text-sm">
-        {likesCount > 0 ? likesCount.toLocaleString('fa-IR') : '۰'}
-      </span>
-      <span className="text-xs text-gray-500">لایک</span>
+      <Heart
+        className={`${iconSizes[size]} ${isLiked ? 'fill-white text-white' : 'text-gray-600'}`}
+      />
+      {size === 'lg' && (
+        <div className="flex flex-col items-start gap-0.5">
+          <span className={`font-semibold text-sm ${isLiked ? 'text-white' : 'text-gray-700'}`}>
+            {isLiked ? 'در علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
+          </span>
+          {likesCount > 0 && (
+            <span className={`text-xs ${isLiked ? 'text-red-100' : 'text-gray-500'}`}>
+              {likesCount.toLocaleString('fa-IR')} لایک
+            </span>
+          )}
+        </div>
+      )}
+      {size !== 'lg' && (
+        <>
+          <span className="font-semibold text-sm">
+            {likesCount > 0 ? likesCount.toLocaleString('fa-IR') : '۰'}
+          </span>
+          <span className="text-xs text-gray-500">لایک</span>
+        </>
+      )}
     </button>
   );
 }

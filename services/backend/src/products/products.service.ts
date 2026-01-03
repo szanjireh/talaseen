@@ -252,11 +252,12 @@ export class ProductsService {
   }
 
   async findBySeller(sellerId: string) {
-    return this.prisma.goldProduct.findMany({
+    const products = await this.prisma.goldProduct.findMany({
       where: { sellerId },
       include: { images: { orderBy: { isPrimary: 'desc' } } },
       orderBy: { createdAt: 'desc' },
     });
+    return { products };
   }
 
   async likeProduct(productId: string, userId: string) {

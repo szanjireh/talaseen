@@ -82,12 +82,11 @@ function DashboardContent() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(api.products.getAll(), {
+      const response = await fetch(api.products.getMyProducts(), {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
         const data = await response.json();
-        // Filter products for this seller only (backend should handle this, but client-side filter as fallback)
         setProducts(data.products || []);
       }
     } catch (error) {

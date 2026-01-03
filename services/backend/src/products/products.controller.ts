@@ -30,6 +30,23 @@ export class ProductsController {
     return this.productsService.findAll({ ...query, userId });
   }
 
+  @Get('my-products')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('SELLER', 'ADMIN')
+  async getMyProducts(@Req() req) {
+    const seller = await this.prisma.seller.findUnique({ where: { userId: req.user.id } });
+    if (!seller) {
+      throw new ForbiddenException('Seller profile not found');
+    }
+    return this.productsService.findBySeller(seller.id);
+  }
+
+  @Get('liked/my-liked')
+  @UseGuards(AuthGuard('jwt'))
+  async getMyLikedProducts(@Req() req, @Query() query: any) {
+    return this.productsService.getUserLikedProducts(req.user.id, query);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req) {
     const userId = req.user?.id;
@@ -75,23 +92,6 @@ export class ProductsController {
       }
     }
     return this.productsService.remove(id);
-  }
-
-  @Get('my-products')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('SELLER', 'ADMIN')
-  async getMyProducts(@Req() req) {
-    const seller = await this.prisma.seller.findUnique({ where: { userId: req.user.id } });
-    if (!seller) {
-      throw new ForbiddenException('Seller profile not found');
-    }
-    return this.productsService.findBySeller(seller.id);
-  }
-
-  @Get('liked/my-liked')
-  @UseGuards(AuthGuard('jwt'))
-  async getMyLikedProducts(@Req() req, @Query() query: any) {
-    return this.productsService.getUserLikedProducts(req.user.id, query);
   }
 
   @Post(':id/like')

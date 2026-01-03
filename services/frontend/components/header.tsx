@@ -314,7 +314,7 @@ export function Header() {
 
         {/* Mobile Search - Enhanced */}
         <div className="md:hidden pb-4">
-          <form onSubmit={handleSearch}>
+          <form onSubmit={handleSearch} className="mb-3">
             <div className="relative">
               <Input
                 type="text"
@@ -332,6 +332,34 @@ export function Header() {
               </Button>
             </div>
           </form>
+
+          {/* Mobile Navigation Links */}
+          <nav className="flex items-center justify-center gap-4 pt-2 border-t border-amber-100">
+            <Link
+              href="/games"
+              className="text-sm font-semibold text-gray-700 hover:text-amber-600 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-amber-50 transition-all"
+            >
+              🎮 بازی‌ها
+            </Link>
+            <Link
+              href="/blog"
+              className="text-sm font-semibold text-gray-700 hover:text-amber-600 px-3 py-2 rounded-lg hover:bg-amber-50 transition-all"
+            >
+              بلاگ
+            </Link>
+            <Link
+              href="/about-us"
+              className="text-sm font-semibold text-gray-700 hover:text-amber-600 px-3 py-2 rounded-lg hover:bg-amber-50 transition-all"
+            >
+              درباره ما
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-semibold text-gray-700 hover:text-amber-600 px-3 py-2 rounded-lg hover:bg-amber-50 transition-all"
+            >
+              تماس
+            </Link>
+          </nav>
         </div>
       </div>
     </header>

@@ -1,7 +1,5 @@
 'use client';
 
-import { Header } from '@/components/header';
-import { AnnouncementBar } from '@/components/announcement-bar';
 import { Card } from '@/components/ui/card';
 import { getImageUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -78,8 +76,6 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <Header />
-        <AnnouncementBar />
         <div className="container mx-auto px-4 py-16 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">در حال بارگذاری محصول...</p>
@@ -91,8 +87,6 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <div className="min-h-screen bg-white">
-        <Header />
-        <AnnouncementBar />
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">محصول یافت نشد</h1>
           <Button onClick={() => router.push('/')}>بازگشت به صفحه اصلی</Button>
@@ -103,9 +97,6 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
-      <AnnouncementBar />
-
       <main className="container mx-auto px-4 py-8">
         {/* Back Button */}
         <Button
@@ -241,21 +232,19 @@ export default function ProductDetailPage() {
               </Card>
             )}
 
-            {/* Like Button */}
-            <div className="mb-4">
-              <LikeButton
-                productId={product.id}
-                initialLikesCount={product.likesCount}
-                initialIsLiked={product.isLiked}
-                size="lg"
-              />
-            </div>
-
             {/* Action Buttons */}
             <div className="flex gap-3">
               <Button className="flex-1 bg-orange-600 hover:bg-orange-700 text-lg py-6">
                 تماس با فروشنده
               </Button>
+              <div className="flex items-center">
+                <LikeButton
+                  productId={product.id}
+                  initialLikesCount={product.likesCount}
+                  initialIsLiked={product.isLiked}
+                  size="lg"
+                />
+              </div>
             </div>
 
             {/* Additional Info */}

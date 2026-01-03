@@ -24,6 +24,7 @@ export const api = {
       const query = params ? `?${new URLSearchParams(params)}` : '';
       return `${API_URL}/products${query}`;
     },
+    getMyProducts: () => `${API_URL}/products/my-products`,
     getById: (id: string) => `${API_URL}/products/${id}`,
     create: () => `${API_URL}/products`,
     update: (id: string) => `${API_URL}/products/${id}`,

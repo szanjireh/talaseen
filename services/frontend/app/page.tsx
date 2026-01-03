@@ -398,12 +398,12 @@ export default function Home() {
               <p className="text-gray-600 text-lg">۴ مرحله ساده برای خرید طلای بهترین</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 mt-16 md:mt-0">
               <div className="relative text-center">
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                <div className="md:absolute -top-12 left-1/2 md:transform md:-translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl mx-auto mb-4 md:mb-0">
                   ۱
                 </div>
-                <div className="pt-12 px-4">
+                <div className="md:pt-12 px-4">
                   <h3 className="text-xl font-bold text-gray-900 mb-3">جستجو و مقایسه</h3>
                   <p className="text-gray-600 leading-relaxed">
                     بازار را جستجو کنید و قیمت‌ها را با هزاران محصول مقایسه کنید
@@ -412,10 +412,10 @@ export default function Home() {
               </div>
 
               <div className="relative text-center">
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                <div className="md:absolute -top-12 left-1/2 md:transform md:-translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl mx-auto mb-4 md:mb-0">
                   ۲
                 </div>
-                <div className="pt-12 px-4">
+                <div className="md:pt-12 px-4">
                   <h3 className="text-xl font-bold text-gray-900 mb-3">انتخاب محصول</h3>
                   <p className="text-gray-600 leading-relaxed">
                     بهترین گزینه‌ را انتخاب کنید و از فروشنده معتبر بخرید
@@ -424,10 +424,10 @@ export default function Home() {
               </div>
 
               <div className="relative text-center">
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                <div className="md:absolute -top-12 left-1/2 md:transform md:-translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl mx-auto mb-4 md:mb-0">
                   ۳
                 </div>
-                <div className="pt-12 px-4">
+                <div className="md:pt-12 px-4">
                   <h3 className="text-xl font-bold text-gray-900 mb-3">پرداخت امن</h3>
                   <p className="text-gray-600 leading-relaxed">
                     درگاه پرداخت ایمن و رمزگذاری شده استفاده کنید
@@ -436,10 +436,10 @@ export default function Home() {
               </div>
 
               <div className="relative text-center">
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl">
+                <div className="md:absolute -top-12 left-1/2 md:transform md:-translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xl mx-auto mb-4 md:mb-0">
                   ۴
                 </div>
-                <div className="pt-12 px-4">
+                <div className="md:pt-12 px-4">
                   <h3 className="text-xl font-bold text-gray-900 mb-3">دریافت محصول</h3>
                   <p className="text-gray-600 leading-relaxed">
                     محصول را به آدرسی که انتخاب کردید دریافت کنید
