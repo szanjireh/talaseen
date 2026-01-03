@@ -10,10 +10,13 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
+import { ImageOptimizerService } from './image-optimizer.service';
 
 @Controller('upload')
 export class UploadController {
+  constructor(private readonly imageOptimizer: ImageOptimizerService) {}
+
   @Post('image')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
@@ -37,20 +40,30 @@ export class UploadController {
         callback(null, true);
       },
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+        fileSize: 10 * 1024 * 1024, // 10MB before compression
       },
     }),
   )
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
+    // Optimize the image
+    const filePath = join('./uploads/products', file.filename);
+    await this.imageOptimizer.optimizeImage(filePath);
+    
+    // Update filename to .webp if it was converted
+    const optimizedFilename = file.filename.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+
     return {
-      url: `/uploads/products/${file.filename}`,
-      filename: file.filename,
-      size: file.size,
-      mimetype: file.mimetype,
+      url: `/uploads/products/${optimizedFilename}`,
+      filename: optimizedFilename,
+      originalSize: file.size,
+      optimizedSize: await this.imageOptimizer.getFileSize(
+        join('./uploads/products', optimizedFilename)
+      ),
+      mimetype: 'image/webp',
     };
   }
 
@@ -77,22 +90,34 @@ export class UploadController {
         callback(null, true);
       },
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB per file
+        fileSize: 10 * 1024 * 1024, // 10MB per file before compression
       },
     }),
   )
-  uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+  async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
     if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
     }
 
+    // Optimize all images
+    const filePaths = files.map((file) => join('./uploads/products', file.filename));
+    await this.imageOptimizer.optimizeImages(filePaths);
+
     return {
-      files: files.map((file) => ({
-        url: `/uploads/products/${file.filename}`,
-        filename: file.filename,
-        size: file.size,
-        mimetype: file.mimetype,
-      })),
+      files: await Promise.all(
+        files.map(async (file) => {
+          const optimizedFilename = file.filename.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+          return {
+            url: `/uploads/products/${optimizedFilename}`,
+            filename: optimizedFilename,
+            originalSize: file.size,
+            optimizedSize: await this.imageOptimizer.getFileSize(
+              join('./uploads/products', optimizedFilename)
+            ),
+            mimetype: 'image/webp',
+          };
+        })
+      ),
     };
   }
 }

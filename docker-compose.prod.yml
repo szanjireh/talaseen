@@ -36,6 +36,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    volumes:
+      - backend_uploads:/app/uploads
     networks:
       - talaseen-network
 
@@ -94,3 +96,4 @@ networks:
 
 volumes:
   postgres_data:
+  backend_uploads:
