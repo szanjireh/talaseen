@@ -62,42 +62,42 @@ export default function Home() {
   return (
     <div>
       <main>
-        {/* Premium Hero Section - Gold Luxury Theme */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-amber-900 via-orange-800 to-amber-900 py-24 md:py-32">
+        {/* Premium Hero Section - Elegant Dark Luxury Theme */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-24 md:py-32">
           {/* Animated Gradient Background */}
           <div className="absolute inset-0">
-            {/* Gold Glow Elements */}
-            <div className="absolute top-10 left-10 w-80 h-80 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-            <div className="absolute bottom-0 right-20 w-96 h-96 bg-gradient-to-tl from-yellow-300 to-amber-400 rounded-full blur-3xl opacity-15"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-orange-400/30 to-transparent rounded-full blur-3xl"></div>
+            {/* Gold & Burgundy Glow Elements */}
+            <div className="absolute top-10 left-10 w-80 h-80 bg-gradient-to-br from-amber-600 to-rose-600 rounded-full blur-3xl opacity-15 animate-pulse"></div>
+            <div className="absolute bottom-0 right-20 w-96 h-96 bg-gradient-to-tl from-amber-500 to-yellow-600 rounded-full blur-3xl opacity-10"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-indigo-600/20 to-transparent rounded-full blur-3xl"></div>
           </div>
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               {/* Premium Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-amber-300/50 mb-6 backdrop-blur-sm hover:bg-white/20 transition-all">
-                <Sparkles className="w-4 h-4 text-amber-200 animate-spin" />
-                <span className="text-amber-100 text-sm font-medium">✨ بازار لوکس طلا و جواهر ✨</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-amber-400/40 mb-6 backdrop-blur-sm hover:bg-white/10 transition-all">
+                <Sparkles className="w-4 h-4 text-amber-300 animate-spin" />
+                <span className="text-amber-200 text-sm font-medium">✨ بازار لوکس طلا و جواهر ✨</span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-extrabold mb-6 font-vazirmatn leading-tight">
-                <span className="bg-gradient-to-r from-yellow-200 via-amber-100 to-orange-200 bg-clip-text text-transparent block mb-2 drop-shadow-lg">طلاسین</span>
-                <span className="text-white text-3xl md:text-4xl font-normal drop-shadow-lg">
+                <span className="bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 bg-clip-text text-transparent block mb-2 drop-shadow-lg">طلاسین</span>
+                <span className="text-slate-100 text-3xl md:text-4xl font-normal drop-shadow-lg">
                   بازار هوشمند طلا و جواهر
                 </span>
               </h1>
               
-              <p className="text-xl md:text-2xl text-amber-50 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+              <p className="text-xl md:text-2xl text-slate-200 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
                 هزاران طلای بازار را یک‌جا مقایسه کنید
                 <br />
-                <span className="text-yellow-200 font-bold">🏆 بهترین قیمت را پیدا کنید 🏆</span>
+                <span className="text-amber-300 font-bold">🏆 بهترین قیمت را پیدا کنید 🏆</span>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 {isAuthenticated && isUser && (
                   <Button
                     onClick={() => setShowSellerDialog(true)}
-                    className="bg-gold-gradient hover:opacity-90 text-gray-900 px-8 py-4 rounded-full text-lg font-bold shadow-2xl shadow-amber-500/50 transition-premium hover:scale-105 border-2 border-amber-400"
+                    className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-gray-900 px-8 py-4 rounded-full text-lg font-bold shadow-2xl shadow-amber-500/40 transition-premium hover:scale-105 border-2 border-amber-300"
                   >
                     <Store className="w-5 h-5 ml-2" />
                     درخواست فروشندگی
@@ -106,13 +106,13 @@ export default function Home() {
                 <Button
                   onClick={() => window.location.href = '/products'}
                   variant="outline"
-                  className="bg-transparent hover:bg-white/10 text-white border-2 border-white/30 hover:border-amber-400 px-8 py-4 rounded-full text-lg font-semibold transition-premium"
+                  className="bg-transparent hover:bg-white/5 text-slate-100 border-2 border-slate-400/50 hover:border-amber-400 px-8 py-4 rounded-full text-lg font-semibold transition-premium"
                 >
                   مشاهده محصولات
                 </Button>
                 <Button
                   onClick={() => window.location.href = '/blog'}
-                  className="bg-amber-500 hover:opacity-95 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md border-amber-400"
+                  className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-lg shadow-amber-600/40 border-amber-500"
                 >
                   مطالعه بلاگ
                 </Button>

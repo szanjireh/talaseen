@@ -121,9 +121,9 @@ export default function RootLayout({
                           <span>📧</span>
                           <span>s.zanjireh@gmail.com</span>
                         </a>
-                        <a href="tel:+989141608334" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center justify-center md:justify-end gap-1" dir="ltr">
+                        <a href="tel:+989141608334" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center justify-center md:justify-end gap-1">
                           <span>📱</span>
-                          <span>+98 914 160 8334</span>
+                          <span>09141608334</span>
                         </a>
                       </div>
                     </div>

@@ -105,7 +105,7 @@ export default function GamesPage() {
 
     if (cell.type === 'gem') {
       // Gem collected!
-      gemsAdded = 10;
+      gemsAdded = 1;
       scoreAdded = 100;
     } else if (cell.type === 'bomb') {
       // Hit bomb
