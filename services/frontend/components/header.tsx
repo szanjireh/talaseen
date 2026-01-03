@@ -43,6 +43,14 @@ export function Header() {
             </div>
           </Link>
 
+          {/* Top Nav Links */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/blog" className="text-sm font-semibold text-gray-700 hover:text-amber-600">بلاگ</Link>
+            <Link href="/about-us" className="text-sm font-semibold text-gray-700 hover:text-amber-600">درباره ما</Link>
+            <Link href="/contact" className="text-sm font-semibold text-gray-700 hover:text-amber-600">تماس</Link>
+            <Link href="/privacy" className="text-sm font-semibold text-gray-700 hover:text-amber-600">حریم خصوصی</Link>
+          </nav>
+
           {/* Search Bar - Enhanced */}
           <form 
             onSubmit={handleSearch}
