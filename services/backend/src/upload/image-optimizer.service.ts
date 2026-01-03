@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import * as sharp from 'sharp';
 import { promises as fs } from 'fs';
 import { join } from 'path';
+
+// Dynamic import for sharp - only loaded if available
+let sharp: any;
+try {
+  sharp = require('sharp');
+} catch (error) {
+  console.log('⚠️  Sharp not installed - image optimization unavailable');
+}
 
 @Injectable()
 export class ImageOptimizerService {
@@ -14,6 +21,10 @@ export class ImageOptimizerService {
    * Optimize a single image - resize and compress
    */
   async optimizeImage(filePath: string): Promise<void> {
+    if (!sharp) {
+      throw new Error('Sharp is not installed');
+    }
+    
     try {
       const buffer = await fs.readFile(filePath);
       
@@ -40,6 +51,10 @@ export class ImageOptimizerService {
    * Create a thumbnail version of the image
    */
   async createThumbnail(filePath: string): Promise<string> {
+    if (!sharp) {
+      throw new Error('Sharp is not installed');
+    }
+    
     try {
       const buffer = await fs.readFile(filePath);
       const thumbnailPath = filePath.replace(/(\.\w+)$/, '-thumb$1');
