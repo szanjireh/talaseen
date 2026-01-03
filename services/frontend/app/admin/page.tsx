@@ -40,6 +40,8 @@ function AdminContent() {
   const [editingAnnouncement, setEditingAnnouncement] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!token) return;
+
     if (activeTab === 'sellers') {
       fetchSellerRequests();
     } else if (activeTab === 'announcements') {
@@ -53,7 +55,7 @@ function AdminContent() {
     } else if (activeTab === 'approved-sellers') {
       fetchApprovedSellers();
     }
-  }, [filter, activeTab]);
+  }, [filter, activeTab, token]);
 
   const fetchUsers = async () => {
     try {
@@ -61,10 +63,12 @@ function AdminContent() {
       const response = await fetch(`${api.baseURL}/auth/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data);
+      if (!response.ok) {
+        console.error('Failed to fetch users:', response.status);
+        return;
       }
+      const data = await response.json();
+      setUsers(data);
     } catch (error) {
       console.error('Failed to fetch users:', error);
     } finally {
@@ -78,10 +82,12 @@ function AdminContent() {
       const response = await fetch(`${api.baseURL}/auth/admin/admins`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setAdmins(data);
+      if (!response.ok) {
+        console.error('Failed to fetch admins:', response.status);
+        return;
       }
+      const data = await response.json();
+      setAdmins(data);
     } catch (error) {
       console.error('Failed to fetch admins:', error);
     } finally {
@@ -95,9 +101,12 @@ function AdminContent() {
       const response = await fetch(`${api.baseURL}/auth/admin/sellers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setSellers(data);
+      if (!response.ok) {
+        console.error('Failed to fetch sellers:', response.status);
+        return;
+      }
+      const data = await response.json();
+      setSellers(data);
       }
     } catch (error) {
       console.error('Failed to fetch sellers:', error);
@@ -112,10 +121,12 @@ function AdminContent() {
       const response = await fetch(api.announcements.getAll(), {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setAnnouncements(data);
+      if (!response.ok) {
+        console.error('Failed to fetch announcements:', response.status);
+        return;
       }
+      const data = await response.json();
+      setAnnouncements(data);
     } catch (error) {
       console.error('Failed to fetch announcements:', error);
     } finally {
@@ -129,10 +140,12 @@ function AdminContent() {
       const response = await fetch(api.products.getAll(), {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
+      if (!response.ok) {
+        console.error('Failed to fetch products:', response.status);
+        return;
       }
+      const data = await response.json();
+      setProducts(data);
     } catch (error) {
       console.error('Failed to fetch products:', error);
     } finally {
@@ -143,10 +156,14 @@ function AdminContent() {
   const fetchSellerRequests = async () => {
     try {
       setLoading(true);
-      const url = filter === 'PENDING' ? api.auth.getPendingSellers() : api.auth.getPendingSellers();
-      const response = await fetch(url, {
+      // For now, just fetch pending sellers - filter on frontend
+      const response = await fetch(api.auth.getPendingSellers(), {
         headers: { Authorization: `Bearer ${token}` },
       });
+      if (!response.ok) {
+        console.error('Failed to fetch seller requests:', response.status);
+        return;
+      }
       const data = await response.json();
       setSellerRequests(data);
     } catch (error) {
