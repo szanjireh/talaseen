@@ -107,7 +107,6 @@ function AdminContent() {
       }
       const data = await response.json();
       setSellers(data);
-      }
     } catch (error) {
       console.error('Failed to fetch sellers:', error);
     } finally {
