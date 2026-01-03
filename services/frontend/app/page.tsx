@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Header } from '@/components/header';
-import { AnnouncementBar } from '@/components/announcement-bar';
+// Header and AnnouncementBar are now rendered globally in layout
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BecomeSellerDialog } from '@/components/become-seller-dialog';
@@ -61,10 +60,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-amber-50/30 to-white">
-      <Header />
-      <AnnouncementBar />
-
+    <div>
       <main>
         {/* Premium Hero Section - Gold Luxury Theme */}
         <section className="relative overflow-hidden bg-charcoal-gradient py-24 md:py-32">
@@ -111,6 +107,12 @@ export default function Home() {
                   className="bg-transparent hover:bg-white/10 text-white border-2 border-white/30 hover:border-amber-400 px-8 py-4 rounded-full text-lg font-semibold transition-premium"
                 >
                   مشاهده محصولات
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/blog'}
+                  className="bg-amber-500 hover:opacity-95 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md border-amber-400"
+                >
+                  مطالعه بلاگ
                 </Button>
               </div>
             </div>
@@ -325,32 +327,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer - Premium Design */}
-        <footer className="relative py-16 bg-charcoal-gradient text-white overflow-hidden">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-amber-500 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-amber-500 rounded-full blur-3xl"></div>
-          </div>
-          
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <div className="mb-6">
-              <h3 className="text-3xl font-bold text-gold-gradient mb-2">طلاسین</h3>
-              <p className="text-amber-200/80">بازار هوشمند طلا و جواهر</p>
-            </div>
-            
-            <div className="flex justify-center gap-6 mb-8">
-              <a href="/products" className="text-amber-200 hover:text-amber-400 transition-colors">محصولات</a>
-              <a href="/search" className="text-amber-200 hover:text-amber-400 transition-colors">جستجو</a>
-              <a href="/dashboard" className="text-amber-200 hover:text-amber-400 transition-colors">پنل کاربری</a>
-            </div>
-            
-            <div className="border-t border-amber-500/20 pt-6">
-              <p className="text-amber-200/70 mb-2">ایمیل: Talagoldseen@gmail.com</p>
-              <p className="text-amber-200/50 text-sm">© ۲۰۲۶ طلاسین - تمامی حقوق محفوظ است</p>
-            </div>
-          </div>
-        </footer>
       </main>
 
       {/* Become Seller Dialog */}

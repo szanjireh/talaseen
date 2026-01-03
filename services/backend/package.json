@@ -6,6 +6,7 @@
     "build": "npx nest build",
     "start": "npx nest start",
     "start:dev": "npx nest start --watch",
+    "dev": "npm run start:dev",
     "start:prod": "node dist/main",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",

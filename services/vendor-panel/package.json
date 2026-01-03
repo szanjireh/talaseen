@@ -1,0 +1,9 @@
+{
+  "name": "vendor-panel",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'vendor-panel workspace stub: no dev server configured'",
+    "build": "echo 'no build'"
+  }
+}
