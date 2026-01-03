@@ -4,7 +4,21 @@ import { ImageOptimizerService } from './image-optimizer.service';
 
 @Module({
   controllers: [UploadController],
-  providers: [ImageOptimizerService],
+  providers: [
+    {
+      provide: ImageOptimizerService,
+      useFactory: () => {
+        try {
+          // Only create service if Sharp is available
+          require('sharp');
+          return new ImageOptimizerService();
+        } catch (error) {
+          console.log('⚠️  Sharp not installed - image optimization disabled');
+          return null;
+        }
+      },
+    },
+  ],
   exports: [ImageOptimizerService],
 })
 export class UploadModule {}

@@ -15,7 +15,7 @@ import { ImageOptimizerService } from './image-optimizer.service';
 
 @Controller('upload')
 export class UploadController {
-  constructor(private readonly imageOptimizer: ImageOptimizerService) {}
+  constructor(private readonly imageOptimizer?: ImageOptimizerService) {}
 
   @Post('image')
   @UseGuards(AuthGuard('jwt'))
@@ -49,21 +49,29 @@ export class UploadController {
       throw new BadRequestException('No file uploaded');
     }
 
-    // Optimize the image
-    const filePath = join('./uploads/products', file.filename);
-    await this.imageOptimizer.optimizeImage(filePath);
+    // Optimize the image if optimizer is available
+    let optimizedFilename = file.filename;
+    let optimizedSize = file.size;
     
-    // Update filename to .webp if it was converted
-    const optimizedFilename = file.filename.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+    if (this.imageOptimizer) {
+      try {
+        const filePath = join('./uploads/products', file.filename);
+        await this.imageOptimizer.optimizeImage(filePath);
+        optimizedFilename = file.filename.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+        optimizedSize = await this.imageOptimizer.getFileSize(
+          join('./uploads/products', optimizedFilename)
+        );
+      } catch (error) {
+        console.log('Image optimization failed, using original:', error.message);
+      }
+    }
 
     return {
       url: `/uploads/products/${optimizedFilename}`,
       filename: optimizedFilename,
       originalSize: file.size,
-      optimizedSize: await this.imageOptimizer.getFileSize(
-        join('./uploads/products', optimizedFilename)
-      ),
-      mimetype: 'image/webp',
+      optimizedSize,
+      mimetype: this.imageOptimizer ? 'image/webp' : file.mimetype,
     };
   }
 
@@ -99,22 +107,40 @@ export class UploadController {
       throw new BadRequestException('No files uploaded');
     }
 
-    // Optimize all images
-    const filePaths = files.map((file) => join('./uploads/products', file.filename));
-    await this.imageOptimizer.optimizeImages(filePaths);
+    // Optimize all images if optimizer is available
+    if (this.imageOptimizer) {
+      try {
+        const filePaths = files.map((file) => join('./uploads/products', file.filename));
+        await this.imageOptimizer.optimizeImages(filePaths);
+      } catch (error) {
+        console.log('Image optimization failed, using originals:', error.message);
+      }
+    }
 
     return {
       files: await Promise.all(
         files.map(async (file) => {
-          const optimizedFilename = file.filename.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+          let optimizedFilename = file.filename;
+          let optimizedSize = file.size;
+          
+          if (this.imageOptimizer) {
+            try {
+              optimizedFilename = file.filename.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+              optimizedSize = await this.imageOptimizer.getFileSize(
+                join('./uploads/products', optimizedFilename)
+              );
+            } catch (error) {
+              optimizedFilename = file.filename;
+              optimizedSize = file.size;
+            }
+          }
+          
           return {
             url: `/uploads/products/${optimizedFilename}`,
             filename: optimizedFilename,
             originalSize: file.size,
-            optimizedSize: await this.imageOptimizer.getFileSize(
-              join('./uploads/products', optimizedFilename)
-            ),
-            mimetype: 'image/webp',
+            optimizedSize,
+            mimetype: this.imageOptimizer ? 'image/webp' : file.mimetype,
           };
         })
       ),
