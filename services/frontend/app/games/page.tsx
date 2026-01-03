@@ -100,21 +100,24 @@ export default function GamesPage() {
     if (cell.revealed) return; // Already revealed
 
     cell.revealed = true;
+    let gemsAdded = 0;
+    let scoreAdded = 0;
 
     if (cell.type === 'gem') {
       // Gem collected!
-      setGems(gems + 10);
-      setScore(score + 100);
+      gemsAdded = 10;
+      scoreAdded = 100;
     } else if (cell.type === 'bomb') {
       // Hit bomb
       const newLives = lives - 1;
       setLives(newLives);
       if (newLives === 0) {
         setGameOver(true);
-        if (gems > 0) {
-          const code = generateDiscountCode(gems);
+        const currentGems = gems + gemsAdded;
+        if (currentGems > 0) {
+          const code = generateDiscountCode(currentGems);
           setDiscountCode(code);
-          const percent = Math.min(5 + Math.floor(gems / 100), 25);
+          const percent = Math.min(5 + Math.floor(currentGems / 100), 25);
           setDiscountPercent(percent);
         }
         setCells(newCells);
@@ -122,13 +125,15 @@ export default function GamesPage() {
       }
     } else if (cell.type === 'bonus') {
       // Bonus! Extra gems
-      setGems(gems + 25);
-      setScore(score + 250);
+      gemsAdded = 25;
+      scoreAdded = 250;
     } else if (cell.type === 'sparkle') {
       // Sparkle - extra points
-      setScore(score + 50);
+      scoreAdded = 50;
     }
 
+    setGems(gems + gemsAdded);
+    setScore(score + scoreAdded);
     setCells(newCells);
   };
 

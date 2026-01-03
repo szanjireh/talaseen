@@ -63,32 +63,34 @@ export default function Home() {
     <div>
       <main>
         {/* Premium Hero Section - Gold Luxury Theme */}
-        <section className="relative overflow-hidden bg-charcoal-gradient py-24 md:py-32">
-          {/* Decorative Elements */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-gold-gradient rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-gold-gradient rounded-full blur-3xl"></div>
+        <section className="relative overflow-hidden bg-gradient-to-br from-amber-900 via-orange-800 to-amber-900 py-24 md:py-32">
+          {/* Animated Gradient Background */}
+          <div className="absolute inset-0">
+            {/* Gold Glow Elements */}
+            <div className="absolute top-10 left-10 w-80 h-80 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+            <div className="absolute bottom-0 right-20 w-96 h-96 bg-gradient-to-tl from-yellow-300 to-amber-400 rounded-full blur-3xl opacity-15"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-orange-400/30 to-transparent rounded-full blur-3xl"></div>
           </div>
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               {/* Premium Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-500/30 mb-6">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <span className="text-amber-300 text-sm font-medium">بازار لوکس طلا و جواهر</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-amber-300/50 mb-6 backdrop-blur-sm hover:bg-white/20 transition-all">
+                <Sparkles className="w-4 h-4 text-amber-200 animate-spin" />
+                <span className="text-amber-100 text-sm font-medium">✨ بازار لوکس طلا و جواهر ✨</span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-extrabold mb-6 font-vazirmatn leading-tight">
-                <span className="text-gold-gradient block mb-2">طلاسین</span>
-                <span className="text-white text-3xl md:text-4xl font-normal">
-                  بازار هوشمند طلا
+                <span className="bg-gradient-to-r from-yellow-200 via-amber-100 to-orange-200 bg-clip-text text-transparent block mb-2 drop-shadow-lg">طلاسین</span>
+                <span className="text-white text-3xl md:text-4xl font-normal drop-shadow-lg">
+                  بازار هوشمند طلا و جواهر
                 </span>
               </h1>
               
-              <p className="text-xl md:text-2xl text-amber-100/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-amber-50 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
                 هزاران طلای بازار را یک‌جا مقایسه کنید
                 <br />
-                <span className="text-amber-300 font-semibold">بهترین قیمت را پیدا کنید</span>
+                <span className="text-yellow-200 font-bold">🏆 بهترین قیمت را پیدا کنید 🏆</span>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

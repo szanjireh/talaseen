@@ -49,7 +49,6 @@ export function Header() {
             <Link href="/blog" className="text-sm font-semibold text-gray-700 hover:text-amber-600">بلاگ</Link>
             <Link href="/about-us" className="text-sm font-semibold text-gray-700 hover:text-amber-600">درباره ما</Link>
             <Link href="/contact" className="text-sm font-semibold text-gray-700 hover:text-amber-600">تماس</Link>
-            <Link href="/privacy" className="text-sm font-semibold text-gray-700 hover:text-amber-600">حریم خصوصی</Link>
           </nav>
 
           {/* Search Bar - Enhanced */}

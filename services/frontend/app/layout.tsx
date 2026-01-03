@@ -96,40 +96,36 @@ export default function RootLayout({
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="border-t border-amber-500/20 pt-6">
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
-                    <p className="text-amber-200/50 text-sm">© ۲۰۲۶ طلاسین - تمامی حقوق محفوظ است</p>
-                    <div className="flex gap-6">
-                      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-amber-200 hover:text-amber-400 transition-colors flex items-center gap-1">
-                        <span>📷</span> <span>اینستاگرام</span>
-                      </a>
-                      <a href="https://telegram.me" target="_blank" rel="noopener noreferrer" className="text-amber-200 hover:text-amber-400 transition-colors flex items-center gap-1">
-                        <span>✈️</span> <span>تلگرام</span>
-                      </a>
-                      <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-amber-200 hover:text-amber-400 transition-colors flex items-center gap-1">
-                        <span>🎵</span> <span>تیک‌تاک</span>
-                      </a>
-                      <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-amber-200 hover:text-amber-400 transition-colors flex items-center gap-1">
-                        <span>👍</span> <span>فیسبوک</span>
-                      </a>
+                <div className="border-t border-amber-500/20 pt-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    {/* Copyright Left */}
+                    <div className="text-center md:text-left">
+                      <p className="text-amber-200/60 text-xs">© ۲۰۲۶ طلاسین</p>
+                      <p className="text-amber-200/50 text-xs">تمامی حقوق محفوظ است</p>
                     </div>
-                  </div>
 
-                  {/* Developer Credit */}
-                  <div className="border-t border-amber-500/10 pt-4 text-center">
-                    <p className="text-amber-200/70 text-xs mb-2">
-                      طراحی و توسعه توسط <span className="font-semibold text-amber-300">سجاد زنجیره</span>
-                    </p>
-                    <div className="flex justify-center gap-4 text-xs">
-                      <a href="mailto:s.zanjireh@gmail.com" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1">
-                        <span>📧</span>
-                        <span>s.zanjireh@gmail.com</span>
-                      </a>
-                      <span className="text-amber-500/30">•</span>
-                      <a href="tel:+989141608334" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1">
-                        <span>📱</span>
-                        <span>+98 914 160 8334</span>
-                      </a>
+                    {/* Developer Credit Center */}
+                    <div className="text-center border-t md:border-t-0 md:border-l md:border-r border-amber-500/10 py-4 md:py-0 md:px-6">
+                      <p className="text-amber-200/70 text-xs mb-2 font-semibold">
+                        طراحی و توسعه
+                      </p>
+                      <p className="text-amber-300 text-xs font-bold">
+                        سجاد زنجیره
+                      </p>
+                    </div>
+
+                    {/* Contact Info Right */}
+                    <div className="text-center md:text-right">
+                      <div className="flex flex-col md:flex-col gap-2 text-xs">
+                        <a href="mailto:s.zanjireh@gmail.com" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center justify-center md:justify-end gap-1">
+                          <span>📧</span>
+                          <span>s.zanjireh@gmail.com</span>
+                        </a>
+                        <a href="tel:+989141608334" className="text-amber-300 hover:text-amber-200 transition-colors flex items-center justify-center md:justify-end gap-1" dir="ltr">
+                          <span>📱</span>
+                          <span>+98 914 160 8334</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
