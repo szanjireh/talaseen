@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "echo 'vendor-panel workspace stub: no dev server configured'",
-    "build": "echo 'no build'"
+    "dev": "echo 'vendor-panel: not yet implemented'",
+    "build": "echo 'vendor-panel: not yet implemented'"
   }
 }
