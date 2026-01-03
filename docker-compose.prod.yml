@@ -28,6 +28,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       PORT: 4000
       NODE_ENV: production
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-https://talaseen.com/api/auth/google/callback}
+      FRONTEND_URL: ${FRONTEND_URL:-https://talaseen.com}
+      FRONTEND_CALLBACK_URL: ${FRONTEND_CALLBACK_URL:-https://talaseen.com/auth/callback}
     expose:
       - "4000"
     depends_on:
@@ -43,7 +46,7 @@ services:
     image: talaseen/frontend:latest
     container_name: talaseen-frontend
     environment:
-      NEXT_PUBLIC_API_URL: /api
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
       INTERNAL_API_URL: http://backend:4000/api
       NODE_ENV: production
       HOSTNAME: 0.0.0.0

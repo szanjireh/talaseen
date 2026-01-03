@@ -1,0 +1,164 @@
+================================================================================
+                    GOOGLE OAUTH FIX - QUICK START GUIDE
+================================================================================
+
+PROBLEM:
+  When registering with Google OAuth in production, the app redirects to
+  http://localhost:4000/api/auth/google instead of https://talaseen.com
+
+ROOT CAUSE:
+  Environment variables were hardcoded to localhost instead of production domain
+
+================================================================================
+                              WHAT WAS FIXED
+================================================================================
+
+✅ Updated .env.production with correct URLs
+   GOOGLE_CALLBACK_URL=https://talaseen.com/api/auth/google/callback
+   FRONTEND_URL=https://talaseen.com
+   NEXT_PUBLIC_API_URL=/api
+
+✅ Updated docker-compose.prod.yml to use environment variables from .env
+
+✅ Updated services/backend/.env for consistency
+
+✅ Created 3 detailed guides:
+   - GOOGLE_OAUTH_FIX.md (Technical overview)
+   - PRODUCTION_DEPLOYMENT.md (Step-by-step for production)
+   - GOOGLE_OAUTH_SETUP.md (Google Cloud Console setup)
+
+================================================================================
+                         ON YOUR PRODUCTION SERVER
+================================================================================
+
+SSH to your server and follow these steps:
+
+1. BACKUP CURRENT .env
+   $ cp .env .env.backup.$(date +%Y%m%d-%H%M%S)
+
+2. COPY NEW .env.production
+   $ cat .env.production > .env
+   OR if using git:
+   $ git pull origin main
+
+3. UPDATE SECRETS (CRITICAL!)
+   Edit .env and change these placeholder values:
+   
+   POSTGRES_PASSWORD=your-actual-strong-password
+   JWT_SECRET=$(openssl rand -base64 32)
+   JWT_REFRESH_SECRET=$(openssl rand -base64 32)
+   
+Keep these as-is (use your actual credentials from Google Cloud Console):
+    GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID_HERE
+    GOOGLE_CLIENT_SECRET=YOUR_GOOGLE_CLIENT_SECRET_HERE
+
+4. RESTART CONTAINERS
+   $ docker-compose -f docker-compose.prod.yml down
+   $ docker-compose -f docker-compose.prod.yml build
+   $ docker-compose -f docker-compose.prod.yml up -d
+   $ sleep 30
+
+5. VERIFY DEPLOYMENT
+   $ docker logs talaseen-backend | head -20
+   $ docker logs talaseen-frontend | head -20
+
+6. TEST GOOGLE OAUTH
+   Visit: https://talaseen.com/login
+   Click: "Login with Google"
+   Should redirect to Google, then back to app
+
+================================================================================
+                      GOOGLE CLOUD CONSOLE (Important!)
+================================================================================
+
+Add this redirect URI to Google Cloud Console:
+  https://talaseen.com/api/auth/google/callback
+
+Steps:
+  1. https://console.cloud.google.com/
+  2. APIs & Services → Credentials
+  3. Edit: OAuth 2.0 Client IDs (Web client)
+  4. Add Authorized redirect URI:
+     https://talaseen.com/api/auth/google/callback
+  5. Save
+
+Without this step, you'll get "Redirect URI mismatch" error!
+
+================================================================================
+                         IF SOMETHING GOES WRONG
+================================================================================
+
+Error: "Redirect URI mismatch"
+  → Check Google Cloud Console Authorized Redirect URIs
+  → Verify .env has: GOOGLE_CALLBACK_URL=https://talaseen.com/api/auth/google/callback
+  → Restart backend: docker-compose -f docker-compose.prod.yml restart talaseen-backend
+
+Error: "Localhost shown instead of domain"
+  → .env file not updated correctly
+  → Run: grep GOOGLE_CALLBACK_URL .env
+  → Should show: https://talaseen.com/api/auth/google/callback
+  → Update if needed and restart
+
+Error: Container won't start
+  → Check logs: docker logs talaseen-backend
+  → Check .env syntax (no trailing spaces, proper quotes)
+  → Ensure JWT secrets are set
+
+================================================================================
+                              FILES MODIFIED
+================================================================================
+
+✅ /home/yousef/talaseen/.env.production
+   - Updated with correct production URLs
+   - GOOGLE_CALLBACK_URL=https://talaseen.com/api/auth/google/callback
+   - FRONTEND_URL=https://talaseen.com
+   - NEXT_PUBLIC_API_URL=/api
+
+✅ /home/yousef/talaseen/docker-compose.prod.yml
+   - Added environment variable overrides for backend and frontend
+   - Now reads GOOGLE_CALLBACK_URL, FRONTEND_URL, etc. from .env
+
+✅ /home/yousef/talaseen/services/backend/.env
+   - Added FRONTEND_CALLBACK_URL for consistency
+
+✅ NEW GUIDES CREATED:
+   - GOOGLE_OAUTH_FIX.md (detailed technical overview)
+   - PRODUCTION_DEPLOYMENT.md (step-by-step for production)
+   - GOOGLE_OAUTH_SETUP.md (Google Cloud Console configuration)
+   - deploy-oauth-fix.sh (automated deployment script)
+
+================================================================================
+                          HOW IT WORKS NOW
+================================================================================
+
+DEVELOPMENT:
+  1. User clicks "Login with Google" at http://localhost:3002
+  2. Frontend redirects to http://localhost:4000/api/auth/google
+  3. Google redirects to http://localhost:4000/api/auth/google/callback
+  4. Backend redirects to http://localhost:3002/auth/callback with token
+
+PRODUCTION:
+  1. User clicks "Login with Google" at https://talaseen.com
+  2. Frontend redirects to /api/auth/google (relative URL)
+  3. Nginx proxies to backend: http://backend:4000/api/auth/google
+  4. Google redirects to https://talaseen.com/api/auth/google/callback
+  5. Nginx proxies to backend callback handler
+  6. Backend redirects to https://talaseen.com/auth/callback with token
+  7. Frontend receives token and redirects to dashboard
+
+Key: Using RELATIVE URLs (/api) in production means the browser uses the
+     same domain it's visiting, so Google OAuth gets correct URLs!
+
+================================================================================
+                            NEXT STEPS
+================================================================================
+
+1. SSH to production server
+2. Follow the "ON YOUR PRODUCTION SERVER" section above
+3. Update Google Cloud Console with redirect URI
+4. Test Google OAuth by visiting https://talaseen.com/login
+5. If issues, check: GOOGLE_OAUTH_SETUP.md or PRODUCTION_DEPLOYMENT.md
+
+For detailed troubleshooting, see the guides in this directory.
+
+================================================================================
