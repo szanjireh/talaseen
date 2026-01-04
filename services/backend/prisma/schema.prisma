@@ -9,19 +9,36 @@ datasource db {
 
 // ==================== USER & SELLER ====================
 
-model User {
+model OtpCode {
   id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone     String
+  code      String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+  @@index([expiresAt])
+}
+
+model User {
+  id        String    @id @default(uuid())
   name      String
-  email     String   @unique
-  googleId  String?  @unique
+  email     String?   @unique
+  googleId  String?   @unique
+  phone     String?   @unique
   avatar    String?
-  role      UserRole @default(USER)
+  role      UserRole  @default(USER)
   seller    Seller?
   likes     Like[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  otpCodes  OtpCode[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([email])
+  @@index([phone])
   @@index([role])
 }
 

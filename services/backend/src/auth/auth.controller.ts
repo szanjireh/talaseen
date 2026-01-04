@@ -92,4 +92,16 @@ export class AuthController {
   async rejectSeller(@Req() req, @Param('id') id: string) {
     return this.authService.rejectSeller(req.user.id, id);
   }
+
+  // ==================== SMS OTP ====================
+
+  @Post('sms/send-otp')
+  async sendOtp(@Body() data: { phone: string }) {
+    return this.authService.sendOtp(data.phone);
+  }
+
+  @Post('sms/verify-otp')
+  async verifyOtp(@Body() data: { phone: string; code: string }) {
+    return this.authService.verifyOtp(data.phone, data.code);
+  }
 }

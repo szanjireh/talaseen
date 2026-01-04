@@ -12,6 +12,8 @@ export const api = {
     getPendingSellers: () => `${API_URL}/auth/admin/pending-sellers`,
     approveSeller: (id: string) => `${API_URL}/auth/admin/sellers/${id}/approve`,
     rejectSeller: (id: string) => `${API_URL}/auth/admin/sellers/${id}/reject`,
+    sendOtp: () => `${API_URL}/auth/sms/send-otp`,
+    verifyOtp: () => `${API_URL}/auth/sms/verify-otp`,
   },
 
   // Product endpoints (gold products)

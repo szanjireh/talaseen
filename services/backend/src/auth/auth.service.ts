@@ -1,13 +1,15 @@
-import { Injectable, UnauthorizedException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
+import { SmsService } from './sms.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private smsService: SmsService,
   ) {}
 
   async validateGoogleUser(profile: any) {
@@ -307,5 +309,102 @@ export class AuthService {
     return this.prisma.seller.findUnique({
       where: { userId },
     });
+  }
+
+  // ==================== SMS OTP AUTHENTICATION ====================
+
+  async sendOtp(phone: string) {
+    // Validate and normalize phone number
+    const normalizedPhone = this.smsService.normalizePhoneNumber(phone);
+    
+    if (!this.smsService.validatePhoneNumber(normalizedPhone)) {
+      throw new BadRequestException('Invalid phone number format');
+    }
+
+    // Generate OTP code
+    const code = this.smsService.generateOtpCode();
+    
+    // Set expiration (5 minutes)
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    // Delete any existing OTP for this phone
+    await this.prisma.otpCode.deleteMany({
+      where: { phone: normalizedPhone },
+    });
+
+    // Save OTP to database
+    await this.prisma.otpCode.create({
+      data: {
+        phone: normalizedPhone,
+        code,
+        expiresAt,
+      },
+    });
+
+    // Send SMS
+    const sent = await this.smsService.sendOtp(normalizedPhone, code);
+    
+    if (!sent) {
+      throw new BadRequestException('Failed to send SMS');
+    }
+
+    return {
+      message: 'کد تایید به شماره موبایل شما ارسال شد',
+      expiresIn: 300, // 5 minutes in seconds
+    };
+  }
+
+  async verifyOtp(phone: string, code: string) {
+    const normalizedPhone = this.smsService.normalizePhoneNumber(phone);
+
+    // Find OTP record
+    const otpRecord = await this.prisma.otpCode.findFirst({
+      where: {
+        phone: normalizedPhone,
+        code,
+        verified: false,
+        expiresAt: {
+          gte: new Date(), // Not expired
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    if (!otpRecord) {
+      throw new UnauthorizedException('کد تایید نامعتبر یا منقضی شده است');
+    }
+
+    // Mark OTP as verified
+    await this.prisma.otpCode.update({
+      where: { id: otpRecord.id },
+      data: { verified: true },
+    });
+
+    // Find or create user
+    let user = await this.prisma.user.findUnique({
+      where: { phone: normalizedPhone },
+    });
+
+    if (!user) {
+      // Create new user with phone number
+      user = await this.prisma.user.create({
+        data: {
+          phone: normalizedPhone,
+          name: `کاربر ${normalizedPhone.slice(-4)}`, // Last 4 digits as default name
+          role: UserRole.USER,
+        },
+      });
+    }
+
+    // Link OTP to user
+    await this.prisma.otpCode.update({
+      where: { id: otpRecord.id },
+      data: { userId: user.id },
+    });
+
+    // Generate JWT and return user info
+    return this.login(user);
   }
 }

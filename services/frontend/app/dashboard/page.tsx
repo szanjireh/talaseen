@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { AddProductForm } from '@/components/add-product-form';
 import { EditProductForm } from '@/components/edit-product-form';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import api from '@/lib/api';
 import { Plus, Package, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -36,10 +36,14 @@ function DashboardContent() {
     isApproved: boolean;
     shopName: string;
   } | null>(null);
+  const hasFetchedSeller = useRef(false);
 
   // Fetch seller status on mount
   useEffect(() => {
     const fetchSellerStatus = async () => {
+      if (hasFetchedSeller.current) return;
+      hasFetchedSeller.current = true;
+
       try {
         const response = await fetch(api.auth.getMySeller(), {
           headers: { Authorization: `Bearer ${token}` },
@@ -52,7 +56,7 @@ function DashboardContent() {
           });
 
           // Update user in auth context if needed
-          if (seller && user) {
+          if (seller && user && seller.shopName !== user.shopName) {
             login(token!, {
               ...user,
               shopName: seller.shopName,
@@ -65,10 +69,10 @@ function DashboardContent() {
       }
     };
 
-    if (token) {
+    if (token && !hasFetchedSeller.current) {
       fetchSellerStatus();
     }
-  }, [token]);
+  }, [token, user, login]);
 
   useEffect(() => {
     const isApproved = sellerStatus?.isApproved ?? user?.isApproved;
