@@ -71,7 +71,17 @@ function FavoritesContent() {
       if (response.ok) {
         const data = await response.json();
         console.log('Received data:', data);
-        const likedProducts = Array.isArray(data) ? data : data?.products || [];
+        let likedProducts = [];
+        if (Array.isArray(data)) {
+          likedProducts = data;
+        } else if (
+          data &&
+          typeof data === 'object' &&
+          data.products &&
+          Array.isArray(data.products)
+        ) {
+          likedProducts = data.products;
+        }
         console.log('Liked products count:', likedProducts.length);
         setProducts(likedProducts);
         setTotalPages(data?.pagination?.pages || 1);

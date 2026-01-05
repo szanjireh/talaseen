@@ -91,7 +91,18 @@ function DashboardContent() {
       });
       if (response.ok) {
         const data = await response.json();
-        setProducts(data.products || []);
+        let productsList = [];
+        if (Array.isArray(data)) {
+          productsList = data;
+        } else if (
+          data &&
+          typeof data === 'object' &&
+          data.products &&
+          Array.isArray(data.products)
+        ) {
+          productsList = data.products;
+        }
+        setProducts(productsList);
       }
     } catch (error) {
       console.error('Failed to fetch products:', error);
