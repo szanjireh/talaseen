@@ -21,9 +21,6 @@ export class AuthController {
     const result = await this.authService.login(req.user);
     const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
     
-    // Debug: log the login result so we can inspect token/user returned
-    // (remove or lower log level later when flow is confirmed)
-    console.log('[AUTH] googleAuthRedirect result:', JSON.stringify(result));
 
     // Redirect to frontend with token and user data
     const redirectUrl = `${frontendUrl}/auth/callback?token=${result.access_token}&user=${encodeURIComponent(JSON.stringify(result.user))}`;
