@@ -56,5 +56,18 @@ services:
       - /app/node_modules
       - /app/.next
 
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: talaseen-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    volumes:
+      - ./nginx/nginx-no-ssl.conf:/etc/nginx/nginx.conf:ro
+
 volumes:
   postgres_data:
