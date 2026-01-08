@@ -21,7 +21,7 @@ function AuthCallbackContent() {
 
     try {
       const user = JSON.parse(decodeURIComponent(userParam));
-      
+
       // Validate user object
       if (!user || !user.id || !user.email) {
         console.error('[AUTH] Invalid user data structure');

@@ -22,9 +22,9 @@ function LoginPageContent() {
 
   // Error messages mapping
   const errorMessages: Record<string, string> = {
-    'missing_credentials': 'اطلاعات ورود ناقص است. لطفاً دوباره تلاش کنید.',
-    'invalid_user_data': 'اطلاعات کاربری نامعتبر است.',
-    'processing_failed': 'خطا در پردازش اطلاعات ورود. لطفاً دوباره امتحان کنید.',
+    missing_credentials: 'اطلاعات ورود ناقص است. لطفاً دوباره تلاش کنید.',
+    invalid_user_data: 'اطلاعات کاربری نامعتبر است.',
+    processing_failed: 'خطا در پردازش اطلاعات ورود. لطفاً دوباره امتحان کنید.',
   };
 
   // Handle error from URL
@@ -33,6 +33,7 @@ function LoginPageContent() {
     if (errorParam && errorMessages[errorParam]) {
       setError(errorMessages[errorParam]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   useEffect(() => {

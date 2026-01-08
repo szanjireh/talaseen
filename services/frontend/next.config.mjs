@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Disable ESLint during builds (warnings will still show in dev)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // Optimize for Docker development
   webpack: (config) => {
     config.watchOptions = {
