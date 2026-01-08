@@ -4,13 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth-context';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
 import api from '@/lib/api';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { isAuthenticated, user, isLoading, login } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'google' | 'sms'>('google');
   const [phone, setPhone] = useState('');
   const [otpCode, setOtpCode] = useState('');
@@ -18,6 +19,21 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [countdown, setCountdown] = useState(0);
+
+  // Error messages mapping
+  const errorMessages: Record<string, string> = {
+    'missing_credentials': 'اطلاعات ورود ناقص است. لطفاً دوباره تلاش کنید.',
+    'invalid_user_data': 'اطلاعات کاربری نامعتبر است.',
+    'processing_failed': 'خطا در پردازش اطلاعات ورود. لطفاً دوباره امتحان کنید.',
+  };
+
+  // Handle error from URL
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam && errorMessages[errorParam]) {
+      setError(errorMessages[errorParam]);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // Don't redirect while still loading
@@ -315,5 +331,22 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">در حال بارگذاری...</p>
+          </div>
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   );
 }

@@ -10,43 +10,44 @@ function AuthCallbackContent() {
   const { login } = useAuth();
 
   useEffect(() => {
-    console.log('[AUTH CALLBACK] Starting callback processing...');
     const token = searchParams.get('token');
     const userParam = searchParams.get('user');
 
-    console.log('[AUTH CALLBACK] Token exists:', !!token);
-    console.log('[AUTH CALLBACK] User param exists:', !!userParam);
-
-    if (token && userParam) {
-      try {
-        console.log('[AUTH CALLBACK] Parsing user data...');
-        const user = JSON.parse(decodeURIComponent(userParam));
-        console.log('[AUTH CALLBACK] User parsed successfully:', user.email);
-
-        console.log('[AUTH CALLBACK] Calling login...');
-        login(token, user);
-        console.log('[AUTH CALLBACK] Login completed');
-
-        // Redirect based on role
-        console.log('[AUTH CALLBACK] Redirecting based on role:', user.role);
-        setTimeout(() => {
-          if (user.role === 'ADMIN') {
-            window.location.href = '/admin';
-          } else if (user.role === 'SELLER') {
-            window.location.href = '/dashboard';
-          } else {
-            window.location.href = '/';
-          }
-        }, 100);
-      } catch (error) {
-        console.error('[AUTH CALLBACK] Error:', error);
-        window.location.href = '/login';
-      }
-    } else {
-      console.log('[AUTH CALLBACK] Missing token or user, redirecting to login');
-      window.location.href = '/login';
+    if (!token || !userParam) {
+      console.error('[AUTH] Missing token or user parameter');
+      router.push('/login?error=missing_credentials');
+      return;
     }
-  }, [searchParams, login]);
+
+    try {
+      const user = JSON.parse(decodeURIComponent(userParam));
+      
+      // Validate user object
+      if (!user || !user.id || !user.email) {
+        console.error('[AUTH] Invalid user data structure');
+        router.push('/login?error=invalid_user_data');
+        return;
+      }
+
+      // Login user
+      login(token, user);
+
+      // Redirect based on role with fallback
+      const role = user.role || 'USER';
+      let redirectPath = '/';
+
+      if (role === 'ADMIN') {
+        redirectPath = '/admin';
+      } else if (role === 'SELLER') {
+        redirectPath = '/dashboard';
+      }
+
+      router.push(redirectPath);
+    } catch (error) {
+      console.error('[AUTH] Error processing callback:', error);
+      router.push('/login?error=processing_failed');
+    }
+  }, [searchParams, login, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
