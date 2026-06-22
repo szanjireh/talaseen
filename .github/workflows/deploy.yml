@@ -11,16 +11,16 @@ on:
         options:
           - production
           - staging
-  push:
-    branches: [ main ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
+  workflow_run:
+    workflows: ["CD Pipeline - Build and Push"]
+    types: [completed]
+    branches: [main]
 
 jobs:
   deploy:
     name: Deploy to ${{ github.event.inputs.environment || 'production' }}
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     environment: ${{ github.event.inputs.environment || 'production' }}
     
     steps:
@@ -40,42 +40,23 @@ jobs:
             echo "❌ Error: SERVER_HOST secret is empty!"
             exit 1
           fi
-
           mkdir -p ~/.ssh
-          # Updated to scan custom port 3031
           ssh-keyscan -p 3031 -H "$HOST" >> ~/.ssh/known_hosts || echo "Warning: ssh-keyscan failed"
 
       - name: Deploy to Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
-          # Added '-p 3031' to target your open SSH port
           ssh -p 3031 -o StrictHostKeyChecking=accept-new $SERVER_USER@$SERVER_HOST << 'ENDSSH'
             cd ${{ secrets.SERVER_PATH }}
-            
-            # Pull latest code
             git pull origin main
-            
-            # Login to GitHub Container Registry
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            
-            # Pull latest images
             docker compose pull
-            
-            # Stop and remove old containers
             docker compose down
-            
-            # Start new containers
             docker compose up -d
-            
-            # Run migrations
             docker compose exec -T backend npx prisma migrate deploy
-            
-            # Clean up unused images
             docker image prune -af
-            
             echo "Deployment completed successfully!"
           ENDSSH
 

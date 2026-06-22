@@ -1,19 +1,22 @@
 name: CD Pipeline - Build and Push
 
 on:
-  push:
-    branches: [ main ]
-    tags:
-      - 'v*.*.*'
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
-  packages: write   # required to push to GHCR
+  packages: write
 
 jobs:
   build-and-push:
     name: Build and Push Docker Images
     runs-on: ubuntu-latest
+    # ── CRITICAL SECURITY CHECK ───────────────────────────────────────
+    # Ensures this ONLY runs if the tests actually passed (not if they failed)
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Checkout code
@@ -35,12 +38,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/talaseen-backend
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       - name: Build and Push Backend
         uses: docker/build-push-action@v5
@@ -59,12 +57,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/talaseen-frontend
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       - name: Build and Push Frontend
         uses: docker/build-push-action@v5
@@ -76,8 +69,3 @@ jobs:
           labels: ${{ steps.meta-frontend.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Image digest
-        run: |
-          echo "Backend Image Digest: ${{ steps.meta-backend.outputs.digest }}"
-          echo "Frontend Image Digest: ${{ steps.meta-frontend.outputs.digest }}"
