@@ -1,60 +1,114 @@
+version: "3.9"
+
 services:
   postgres:
     image: postgres:15-alpine
     container_name: talaseen-db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-talaseen}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-talaseen123}
-      POSTGRES_DB: ${POSTGRES_DB:-talaseen}
-    ports:
-      - "5433:5432"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U talaseen"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    expose:
+      - "5432"
+    restart: unless-stopped
+    networks:
+      - talaseen-network
+    command: 
+      - "postgres"
+      - "-c"
+      - "max_connections=500"
+      - "-c"
+      - "shared_buffers=2GB"
+      - "-c"
+      - "work_mem=20MB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 3G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
 
   backend:
-    build:
-      context: ./services/backend
-      dockerfile: Dockerfile
+    image: ghcr.io/szanjireh/talaseen-backend:latest
     container_name: talaseen-backend
     env_file:
       - .env
-      - ./services/backend/.env
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-talaseen}:${POSTGRES_PASSWORD:-talaseen123}@postgres:5432/${POSTGRES_DB:-talaseen}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       PORT: 4000
-    ports:
-      - "4000:4000"
+      NODE_ENV: production
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-https://talaseen.com/api/auth/google/callback}
+      FRONTEND_URL: ${FRONTEND_URL:-https://talaseen.com}
+      FRONTEND_CALLBACK_URL: ${FRONTEND_CALLBACK_URL:-https://talaseen.com/auth/callback}
+    expose:
+      - "4000"
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
+    restart: unless-stopped
     volumes:
-      - ./services/backend:/app
-      - /app/node_modules
-      - ./services/backend/uploads:/app/uploads
+      - backend_uploads:/app/uploads
+    networks:
+      - talaseen-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: 1.5G
+        reservations:
+          cpus: '0.5'
+          memory: 800M
 
   frontend:
-    build:
-      context: ./services/frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/szanjireh/talaseen-frontend:latest
     container_name: talaseen-frontend
     environment:
-      # For client-side requests (browser)
-      NEXT_PUBLIC_API_URL: http://localhost:4000/api
-      # For server-side requests (within Docker network)
-      INTERNAL_API_URL: http://backend:4000/api
-    ports:
-      - "3002:3000"
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+    expose:
+      - "3000"
     depends_on:
       - backend
-    volumes:
-      - ./services/frontend:/app
-      - /app/node_modules
-      - /app/.next
+    restart: unless-stopped
+    networks:
+      - talaseen-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+        reservations:
+          cpus: '0.3'
+          memory: 300M
+
+  # ── Atash Travel Application ────────────────────────────────────
+  atashtravel:
+    image: ghcr.io/szanjireh/atashtravel:latest
+    container_name: atashtravel
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - talaseen-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
 
   nginx:
     build:
@@ -63,11 +117,54 @@ services:
     container_name: talaseen-nginx
     ports:
       - "80:80"
-    depends_on:
-      - backend
-      - frontend
+      - "443:443"
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     volumes:
-      - ./nginx/nginx-no-ssl.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - frontend
+      - backend
+      - atashtravel
+    restart: unless-stopped
+    networks:
+      - talaseen-network
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.3'
+          memory: 200M
+
+  certbot:
+    image: certbot/certbot
+    container_name: talaseen-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - talaseen-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+networks:
+  talaseen-network:
+    name: talaseen-network
+    driver: bridge
 
 volumes:
   postgres_data:
+  backend_uploads:

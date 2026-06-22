@@ -35,10 +35,7 @@ services:
           memory: 2G
 
   backend:
-    build:
-      context: ./services/backend
-      dockerfile: Dockerfile
-    image: talaseen/backend:latest
+    image: ghcr.io/szanjireh/talaseen-backend:latest
     container_name: talaseen-backend
     env_file:
       - .env
@@ -68,13 +65,7 @@ services:
           memory: 800M
 
   frontend:
-    build:
-      context: ./services/frontend
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
-        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-https://talaseen.com}
-    image: talaseen/frontend:latest
+    image: ghcr.io/szanjireh/talaseen-frontend:latest
     container_name: talaseen-frontend
     environment:
       NODE_ENV: production
@@ -96,8 +87,6 @@ services:
           memory: 300M
 
   # ── Atash Travel Application ────────────────────────────────────
-  # Keeping this service in the same compose file guarantees that 
-  # Nginx can resolve the 'atashtravel' hostname on deployment.
   atashtravel:
     image: ghcr.io/szanjireh/atashtravel:latest
     container_name: atashtravel
@@ -106,7 +95,12 @@ services:
       - "80"
     networks:
       - talaseen-network
-    # Note: Ensure you check `docker logs atashtravel` if this service stays (unhealthy)
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     deploy:
       resources:
         limits:
@@ -124,6 +118,10 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
@@ -164,7 +162,7 @@ services:
 
 networks:
   talaseen-network:
-    name: talaseen-network  # Hardcodes the network identity to prevent cross-stack routing drift
+    name: talaseen-network
     driver: bridge
 
 volumes:
