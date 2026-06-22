@@ -6,6 +6,10 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: read
+  packages: write   # required to push to GHCR
+
 jobs:
   build-and-push:
     name: Build and Push Docker Images
@@ -18,17 +22,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata for Backend
         id: meta-backend
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/talaseen-backend
+          images: ghcr.io/${{ github.repository_owner }}/talaseen-backend
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -52,7 +57,7 @@ jobs:
         id: meta-frontend
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/talaseen-frontend
+          images: ghcr.io/${{ github.repository_owner }}/talaseen-frontend
           tags: |
             type=ref,event=branch
             type=ref,event=pr
