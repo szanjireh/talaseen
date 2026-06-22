@@ -96,11 +96,7 @@ services:
     networks:
       - talaseen-network
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+      disable: true
     deploy:
       resources:
         limits:
@@ -168,13 +164,3 @@ networks:
 volumes:
   postgres_data:
   backend_uploads:
-
-atashtravel:
-    image: ghcr.io/szanjireh/atashtravel:latest
-    container_name: atashtravel
-    restart: unless-stopped
-    healthcheck:
-      disable: true
-    # This ensures it automatically joins the same virtual network space on boot
-    networks:
-      - default
