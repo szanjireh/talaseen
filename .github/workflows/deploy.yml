@@ -33,9 +33,18 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add server to known hosts
+        env:
+          HOST: ${{ secrets.SERVER_HOST }}
         run: |
+          # Check if the secret is actually populated
+          if [ -z "$HOST" ]; then
+            echo "❌ Error: SERVER_HOST secret is empty or missing in this environment!"
+            exit 1
+          fi
+
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          # Scan port 22 specifically, and use || true to prevent network hiccup failures
+          ssh-keyscan -p 22 -H "$HOST" >> ~/.ssh/known_hosts || echo "Warning: ssh-keyscan failed, attempting to proceed anyway."
 
       - name: Deploy to Server
         env:
@@ -43,7 +52,7 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
-          ssh $SERVER_USER@$SERVER_HOST << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=accept-new $SERVER_USER@$SERVER_HOST << 'ENDSSH'
             cd ${{ secrets.SERVER_PATH }}
             
             # Pull latest code
