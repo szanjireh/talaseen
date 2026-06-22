@@ -36,15 +36,14 @@ jobs:
         env:
           HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          # Check if the secret is actually populated
           if [ -z "$HOST" ]; then
-            echo "❌ Error: SERVER_HOST secret is empty or missing in this environment!"
+            echo "❌ Error: SERVER_HOST secret is empty!"
             exit 1
           fi
 
           mkdir -p ~/.ssh
-          # Scan port 22 specifically, and use || true to prevent network hiccup failures
-          ssh-keyscan -p 22 -H "$HOST" >> ~/.ssh/known_hosts || echo "Warning: ssh-keyscan failed, attempting to proceed anyway."
+          # Updated to scan custom port 3031
+          ssh-keyscan -p 3031 -H "$HOST" >> ~/.ssh/known_hosts || echo "Warning: ssh-keyscan failed"
 
       - name: Deploy to Server
         env:
@@ -52,7 +51,8 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
-          ssh -o StrictHostKeyChecking=accept-new $SERVER_USER@$SERVER_HOST << 'ENDSSH'
+          # Added '-p 3031' to target your open SSH port
+          ssh -p 3031 -o StrictHostKeyChecking=accept-new $SERVER_USER@$SERVER_HOST << 'ENDSSH'
             cd ${{ secrets.SERVER_PATH }}
             
             # Pull latest code
