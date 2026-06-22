@@ -48,29 +48,59 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
+          # Single quotes around 'ENDSSH' prevent early evaluation of token contexts
           ssh -p 3031 -o StrictHostKeyChecking=accept-new $SERVER_USER@$SERVER_HOST << 'ENDSSH'
-            cd ${{ secrets.SERVER_PATH }}
+            # 1. Enforce strict directory navigation
+            cd "${{ secrets.SERVER_PATH }}" || { echo "❌ Error: Target deployment directory not found!"; exit 1; }
+            echo "Working Directory Verified: $(pwd)"
+            
+            # 2. Update local repository files
             git pull origin main
+            
+            # 3. Authenticate with GHCR
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            docker compose pull
-            docker compose down
-            docker compose up -d
-            docker compose exec -T backend npx prisma migrate deploy
-            docker image prune -af
+            
+            # 4. Verify Compose existence and download the fresh build layers
+            if [ -f "docker-compose.yml" ]; then
+              echo "⬇️ Pulling fresh images from GHCR..."
+              docker compose pull
+              
+              echo "🔄 Recreating service containers..."
+              docker compose down
+              docker compose up -d
+              
+              echo "🚀 Executing database migrations..."
+              docker compose exec -T backend npx prisma migrate deploy
+              
+              echo "🧹 Cleaning up legacy dangling layers..."
+              docker image prune -af
+            else
+              echo "❌ Error: Missing docker-compose.yml inside target directory."
+              exit 1
+            fi
+            
             echo "Deployment completed successfully!"
           ENDSSH
 
       - name: Health Check
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          sleep 10
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:4000/api/health || echo "000")
-          if [ "$response" = "200" ] || [ "$response" = "404" ]; then
-            echo "Backend is responding"
-          else
-            echo "Backend health check failed with status: $response"
-            exit 1
-          fi
-
+          ssh -p 3031 -o StrictHostKeyChecking=accept-new $SERVER_USER@$SERVER_HOST << 'ENDSSH'
+            echo "Waiting for backend initialization..."
+            sleep 15
+            
+            # Curl the backend locally inside the server network where port 4000 is accessible
+            response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:4000/api/health || echo "000")
+            
+            if [ "$response" = "200" ] || [ "$response" = "404" ]; then
+              echo "✅ Backend is responding cleanly with status: $response"
+            else
+              echo "❌ Backend health check failed internally with status: $response"
+              exit 1
+            fi
+          ENDSSH
       - name: Notify Deployment
         if: always()
         run: |
