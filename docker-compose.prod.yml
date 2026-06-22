@@ -168,3 +168,13 @@ networks:
 volumes:
   postgres_data:
   backend_uploads:
+
+atashtravel:
+    image: ghcr.io/szanjireh/atashtravel:latest
+    container_name: atashtravel
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+    # This ensures it automatically joins the same virtual network space on boot
+    networks:
+      - default
