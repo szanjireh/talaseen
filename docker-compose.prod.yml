@@ -95,6 +95,27 @@ services:
           cpus: '0.3'
           memory: 300M
 
+  # ── Atash Travel Application ────────────────────────────────────
+  # Keeping this service in the same compose file guarantees that 
+  # Nginx can resolve the 'atashtravel' hostname on deployment.
+  atashtravel:
+    image: ghcr.io/szanjireh/atashtravel:latest
+    container_name: atashtravel
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - talaseen-network
+    # Note: Ensure you check `docker logs atashtravel` if this service stays (unhealthy)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
+
   nginx:
     build:
       context: ./nginx
@@ -109,6 +130,7 @@ services:
     depends_on:
       - frontend
       - backend
+      - atashtravel
     restart: unless-stopped
     networks:
       - talaseen-network
@@ -142,6 +164,7 @@ services:
 
 networks:
   talaseen-network:
+    name: talaseen-network  # Hardcodes the network identity to prevent cross-stack routing drift
     driver: bridge
 
 volumes:
