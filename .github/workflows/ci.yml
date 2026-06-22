@@ -34,9 +34,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24' # Upgraded to fix deprecation notice
-          cache: 'npm'
-          cache-dependency-path: services/backend/package-lock.json
+          node-version: '24' # Caching removed to prevent path resolution errors
 
       - name: Install dependencies
         working-directory: services/backend
@@ -75,9 +73,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24' # Upgraded to fix deprecation notice
-          cache: 'npm'
-          cache-dependency-path: services/frontend/package-lock.json
+          node-version: '24' # Caching removed to prevent path resolution errors
 
       - name: Install dependencies
         working-directory: services/frontend
